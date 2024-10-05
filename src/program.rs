@@ -93,7 +93,9 @@ where
 {
 	thread::spawn(move || {
 		while let Ok(event) = crossterm_read() {
-			sender.send(Msg::Term(event));
+			if sender.send(Msg::Term(event)).is_err() {
+				return;
+			}
 		}
 	})
 }
