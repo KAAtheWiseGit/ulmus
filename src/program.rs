@@ -1,5 +1,5 @@
 use crossterm::{
-	cursor::{MoveTo, MoveToNextLine},
+	cursor::{MoveTo, MoveToNextLine, Hide as CursorHide, Show as CursorShow},
 	event::read as crossterm_read,
 	style::Print,
 	terminal::{
@@ -49,6 +49,7 @@ where
 		stdout.execute(EnterAlternateScreen);
 		enable_raw_mode().unwrap();
 		stdout.execute(Clear(ClearType::All));
+		stdout.execute(CursorHide);
 
 		let mut threads = vec![];
 		threads.push(spawn_crossterm(self.sender.clone()));
@@ -83,6 +84,7 @@ where
 		}
 
 		// Restore the terminal view
+		stdout.execute(CursorShow);
 		disable_raw_mode().unwrap();
 		stdout.execute(LeaveAlternateScreen);
 	}
