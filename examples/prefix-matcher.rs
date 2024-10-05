@@ -30,7 +30,7 @@ impl Model for PrefixMatcher {
 	fn update(
 		&mut self,
 		message: Msg<Self::CustomMsg>,
-	) -> Cmd<Self::CustomMsg> {
+	) -> Option<Cmd<Self::CustomMsg>> {
 		match message {
 			Msg::Term(Event::Key(key_event)) => {
 				match key_event.code {
@@ -41,7 +41,7 @@ impl Model for PrefixMatcher {
 						self.query.push(c);
 					}
 					KeyCode::Esc => {
-						return Cmd::Quit;
+						return Some(Cmd::Quit);
 					}
 					_ => {}
 				}
@@ -49,7 +49,7 @@ impl Model for PrefixMatcher {
 			_ => {}
 		}
 
-		return Cmd::Term;
+		return None;
 	}
 
 	fn view(&self) -> impl AsRef<str> {
