@@ -8,7 +8,7 @@ use crossterm::{
 
 use std::{io::stdout, sync::mpsc};
 
-use crate::interface::Msg;
+use crate::interface::{Cmd, Msg};
 
 pub struct Program<M, T>
 where
@@ -42,6 +42,27 @@ where
 		stdout.execute(EnterAlternateScreen);
 		enable_raw_mode().unwrap();
 		stdout.execute(Clear(ClearType::All));
+
+		loop {
+			let Ok(message) = self.reciever.recv() else {
+				break;
+			};
+
+			match self.model.update(message) {
+				Cmd::Term => {
+					// TODO execute the crossterm command
+				}
+				Cmd::Quit => {
+					break;
+				}
+				Cmd::Subroutine(subroutine) => {
+					// TODO
+				}
+			}
+
+			let _ = self.model.view();
+			// TODO draw the output
+		}
 
 		// Restore the terminal view
 		disable_raw_mode().unwrap();
