@@ -76,9 +76,6 @@ where
 		}
 
 		drop(reciever);
-		for handle in threads {
-			handle.join();
-		}
 
 		// Restore the terminal view
 		stdout.execute(CursorShow);
