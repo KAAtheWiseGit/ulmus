@@ -5,8 +5,8 @@ pub enum Msg<T> {
 	Custom(T),
 }
 
-pub trait Model {
-	type CustomMsg;
+pub trait Model: Sized {
+	type CustomMsg: Sized;
 
 	fn init() -> Self;
 
