@@ -17,7 +17,7 @@ use std::{
 	thread,
 };
 
-use crate::interface::{Cmd, Msg};
+use crate::interface::{Cmd, Msg, TermCommandImpl};
 
 pub struct Program<M, T>
 where
@@ -59,8 +59,10 @@ where
 			};
 
 			match self.model.update(message) {
-				Cmd::Term(_) => {
-					// TODO execute the crossterm command
+				Cmd::Term(term_command) => {
+					let term_command: TermCommandImpl =
+						term_command.into();
+					stdout.execute(term_command);
 				}
 				Cmd::Quit => {
 					break;

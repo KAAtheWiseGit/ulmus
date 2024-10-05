@@ -34,7 +34,7 @@ pub struct TermCommand(String);
 /// implement `From<T: CrosstermCommand>` and `CrosstermCommand` at  the same
 /// time, as it causes it to conflict with the `From<T> for T` implementation
 /// from the standard library.
-struct TermCommandImpl(String);
+pub struct TermCommandImpl(String);
 
 impl<T: CrosstermCommand> From<T> for TermCommand {
 	fn from(value: T) -> Self {
