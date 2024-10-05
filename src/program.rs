@@ -1,4 +1,5 @@
 use crossterm::{
+	event::read as crossterm_read,
 	terminal::{
 		disable_raw_mode, enable_raw_mode, Clear, ClearType,
 		EnterAlternateScreen, LeaveAlternateScreen,
@@ -6,7 +7,11 @@ use crossterm::{
 	ExecutableCommand,
 };
 
-use std::{io::stdout, sync::mpsc, thread};
+use std::{
+	io::{stdout, Stdout},
+	sync::mpsc,
+	thread,
+};
 
 use crate::interface::{Cmd, Msg};
 
@@ -44,6 +49,7 @@ where
 		stdout.execute(Clear(ClearType::All));
 
 		let mut threads = vec![];
+		threads.push(spawn_crossterm(self.sender.clone()));
 
 		loop {
 			let Ok(message) = self.reciever.recv() else {
@@ -78,4 +84,15 @@ where
 		disable_raw_mode().unwrap();
 		stdout.execute(LeaveAlternateScreen);
 	}
+}
+
+fn spawn_crossterm<T>(sender: mpsc::Sender<Msg<T>>) -> thread::JoinHandle<()>
+where
+	T: Send + 'static,
+{
+	thread::spawn(move || {
+		while let Ok(event) = crossterm_read() {
+			sender.send(Msg::Term(event));
+		}
+	})
 }
