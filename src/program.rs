@@ -59,7 +59,7 @@ where
 			};
 
 			match self.model.update(message) {
-				Cmd::Term => {
+				Cmd::Term(_) => {
 					// TODO execute the crossterm command
 				}
 				Cmd::Quit => {
