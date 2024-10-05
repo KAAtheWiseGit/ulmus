@@ -7,3 +7,6 @@ authors = ["Andrej Kolčin <self@kaathewise.net>"]
 
 [dependencies]
 crossterm = "0.28.1"
+
+[dev-dependencies]
+walkdir = "2.5.0"
