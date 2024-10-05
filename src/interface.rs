@@ -2,14 +2,14 @@ use crossterm::{event::Event as CrosstermEvent, Command as CrosstermCommand};
 
 use std::sync::mpsc;
 
-type Subroutine<T> = Box<dyn FnOnce(mpsc::Sender<Msg<T>>)>;
+type Subroutine<T> = Box<dyn FnOnce(mpsc::Sender<Msg<T>>) + Send>;
 
-pub enum Msg<T> {
+pub enum Msg<T: Send> {
 	Term(CrosstermEvent),
 	Custom(T),
 }
 
-pub enum Cmd<T> {
+pub enum Cmd<T: Send> {
 	// TODO implement an opaque type, which can supports From for crossterm
 	// commands
 	Term,
@@ -18,7 +18,7 @@ pub enum Cmd<T> {
 }
 
 pub trait Model: Sized {
-	type CustomMsg: Sized;
+	type CustomMsg: Sized + Send;
 
 	fn init() -> Self;
 

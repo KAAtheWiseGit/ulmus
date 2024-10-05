@@ -6,14 +6,14 @@ use crossterm::{
 	ExecutableCommand,
 };
 
-use std::{io::stdout, sync::mpsc};
+use std::{io::stdout, sync::mpsc, thread};
 
 use crate::interface::{Cmd, Msg};
 
 pub struct Program<M, T>
 where
 	M: crate::Model<CustomMsg = T>,
-	T: Sized,
+	T: Sized + Send,
 {
 	model: M,
 	reciever: mpsc::Receiver<Msg<T>>,
@@ -23,7 +23,7 @@ where
 impl<M, T> Program<M, T>
 where
 	M: crate::Model<CustomMsg = T>,
-	T: Sized,
+	T: Sized + Send,
 {
 	pub fn new(model: M) -> Self {
 		let (sender, reciever) = mpsc::channel::<Msg<T>>();
