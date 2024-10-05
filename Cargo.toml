@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 license = "MPL-2.0"
 authors = ["Andrej Kolčin <self@kaathewise.net>"]
+description = "An Elm architecture TUI framework"
+keywords = ["tui", "user-interface", "elm"]
+categories = ["command-line-interface"]
 
 [dependencies]
 crossterm = "0.28.1"
