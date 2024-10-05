@@ -1,5 +1,7 @@
 use crossterm::{
-	cursor::{MoveTo, MoveToNextLine, Hide as CursorHide, Show as CursorShow},
+	cursor::{
+		Hide as CursorHide, MoveTo, MoveToNextLine, Show as CursorShow,
+	},
 	event::read as crossterm_read,
 	style::Print,
 	terminal::{
@@ -55,6 +57,10 @@ where
 		threads.push(spawn_crossterm(self.sender.clone()));
 
 		loop {
+			let view = self.model.view();
+			draw(&mut stdout, view.as_ref());
+			drop(view);
+
 			let Ok(message) = self.reciever.recv() else {
 				break;
 			};
@@ -74,9 +80,6 @@ where
 					threads.push(handle);
 				}
 			}
-
-			let view = self.model.view();
-			draw(&mut stdout, view.as_ref());
 		}
 
 		for handle in threads {
