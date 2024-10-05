@@ -23,7 +23,7 @@ pub trait Model: Sized {
 	fn update(
 		&mut self,
 		message: Msg<Self::CustomMsg>,
-	) -> Cmd<Self::CustomMsg>;
+	) -> Option<Cmd<Self::CustomMsg>>;
 
 	fn view(&self) -> impl AsRef<str>;
 }
