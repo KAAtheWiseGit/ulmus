@@ -20,8 +20,6 @@ pub enum Cmd<T: Send + 'static> {
 pub trait Model: Sized {
 	type CustomMsg: Sized + Send + 'static;
 
-	fn init() -> Self;
-
 	fn update(
 		&mut self,
 		message: Msg<Self::CustomMsg>,
