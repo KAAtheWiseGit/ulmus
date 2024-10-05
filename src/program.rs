@@ -103,6 +103,8 @@ where
 
 fn draw(stdout: &mut Stdout, view: &str) {
 	let height = terminal_size().unwrap().1;
+
+	stdout.queue(Clear(ClearType::All));
 	stdout.queue(MoveTo(0, 0));
 
 	for (row, line) in view.lines().enumerate() {
