@@ -13,7 +13,7 @@ use crate::interface::{Cmd, Msg};
 pub struct Program<M, T>
 where
 	M: crate::Model<CustomMsg = T>,
-	T: Sized + Send,
+	T: Send + 'static,
 {
 	model: M,
 	reciever: mpsc::Receiver<Msg<T>>,
@@ -23,7 +23,7 @@ where
 impl<M, T> Program<M, T>
 where
 	M: crate::Model<CustomMsg = T>,
-	T: Sized + Send,
+	T: Send + 'static,
 {
 	pub fn new(model: M) -> Self {
 		let (sender, reciever) = mpsc::channel::<Msg<T>>();

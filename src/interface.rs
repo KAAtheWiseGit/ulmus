@@ -4,12 +4,12 @@ use std::sync::mpsc;
 
 type Subroutine<T> = Box<dyn FnOnce(mpsc::Sender<Msg<T>>) + Send>;
 
-pub enum Msg<T: Send> {
+pub enum Msg<T: Send + 'static> {
 	Term(CrosstermEvent),
 	Custom(T),
 }
 
-pub enum Cmd<T: Send> {
+pub enum Cmd<T: Send + 'static> {
 	// TODO implement an opaque type, which can supports From for crossterm
 	// commands
 	Term,
@@ -18,7 +18,7 @@ pub enum Cmd<T: Send> {
 }
 
 pub trait Model: Sized {
-	type CustomMsg: Sized + Send;
+	type CustomMsg: Sized + Send + 'static;
 
 	fn init() -> Self;
 
