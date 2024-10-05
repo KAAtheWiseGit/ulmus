@@ -10,8 +10,6 @@ pub enum Msg<T: Send + 'static> {
 }
 
 pub enum Cmd<T: Send + 'static> {
-	// TODO implement an opaque type, which can supports From for crossterm
-	// commands
 	Term(TermCommand),
 	Quit,
 	Subroutine(Subroutine<T>),
