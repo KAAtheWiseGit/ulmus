@@ -1,14 +1,16 @@
 use crossterm::{
+	cursor::{MoveTo, MoveToNextLine},
 	event::read as crossterm_read,
+	style::Print,
 	terminal::{
-		disable_raw_mode, enable_raw_mode, Clear, ClearType,
-		EnterAlternateScreen, LeaveAlternateScreen,
+		disable_raw_mode, enable_raw_mode, size as terminal_size,
+		Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen,
 	},
-	ExecutableCommand,
+	ExecutableCommand, QueueableCommand,
 };
 
 use std::{
-	io::{stdout, Stdout},
+	io::{stdout, Stdout, Write},
 	sync::mpsc,
 	thread,
 };
@@ -72,8 +74,8 @@ where
 				}
 			}
 
-			let _ = self.model.view();
-			// TODO draw the output
+			let view = self.model.view();
+			draw(&mut stdout, view.as_ref());
 		}
 
 		for handle in threads {
@@ -95,4 +97,20 @@ where
 			sender.send(Msg::Term(event));
 		}
 	})
+}
+
+fn draw(stdout: &mut Stdout, view: &str) {
+	let height = terminal_size().unwrap().1;
+	stdout.queue(MoveTo(0, 0));
+
+	for (row, line) in view.lines().enumerate() {
+		if row >= height.into() {
+			break;
+		}
+
+		stdout.queue(Print(line));
+		stdout.queue(MoveToNextLine(1));
+	}
+
+	stdout.flush();
 }
