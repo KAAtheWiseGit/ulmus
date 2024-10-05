@@ -43,6 +43,8 @@ where
 		enable_raw_mode().unwrap();
 		stdout.execute(Clear(ClearType::All));
 
+		let mut threads = vec![];
+
 		loop {
 			let Ok(message) = self.reciever.recv() else {
 				break;
@@ -56,12 +58,20 @@ where
 					break;
 				}
 				Cmd::Subroutine(subroutine) => {
-					// TODO
+					let sender = self.sender.clone();
+					let handle = thread::spawn(move || {
+						subroutine(sender);
+					});
+					threads.push(handle);
 				}
 			}
 
 			let _ = self.model.view();
 			// TODO draw the output
+		}
+
+		for handle in threads {
+			handle.join();
 		}
 
 		// Restore the terminal view
