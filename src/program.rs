@@ -25,8 +25,6 @@ where
 	T: Send + 'static,
 {
 	model: M,
-	reciever: mpsc::Receiver<Msg<T>>,
-	sender: mpsc::Sender<Msg<T>>,
 }
 
 impl<M, T> Program<M, T>
@@ -35,17 +33,12 @@ where
 	T: Send + 'static,
 {
 	pub fn new(model: M) -> Self {
-		let (sender, reciever) = mpsc::channel::<Msg<T>>();
-
-		Self {
-			model,
-			reciever,
-			sender,
-		}
+		Self { model }
 	}
 
 	pub fn run(&mut self) {
 		let mut stdout = stdout();
+		let (sender, reciever) = mpsc::channel::<Msg<T>>();
 
 		// Setup the TUI view
 		stdout.execute(EnterAlternateScreen);
@@ -54,14 +47,14 @@ where
 		stdout.execute(CursorHide);
 
 		let mut threads = vec![];
-		threads.push(spawn_crossterm(self.sender.clone()));
+		threads.push(spawn_crossterm(sender.clone()));
 
 		loop {
 			let view = self.model.view();
 			draw(&mut stdout, view.as_ref());
 			drop(view);
 
-			let Ok(message) = self.reciever.recv() else {
+			let Ok(message) = reciever.recv() else {
 				break;
 			};
 
@@ -73,7 +66,7 @@ where
 					break;
 				}
 				Cmd::Subroutine(subroutine) => {
-					let sender = self.sender.clone();
+					let sender = sender.clone();
 					let handle = thread::spawn(move || {
 						subroutine(sender);
 					});
@@ -82,6 +75,7 @@ where
 			}
 		}
 
+		drop(reciever);
 		for handle in threads {
 			handle.join();
 		}
