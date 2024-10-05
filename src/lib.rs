@@ -3,5 +3,5 @@
 mod interface;
 mod program;
 
-pub use interface::Model;
+pub use interface::{Cmd, Model, Msg};
 pub use program::Program;
