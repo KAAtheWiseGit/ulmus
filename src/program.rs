@@ -58,7 +58,10 @@ where
 				break;
 			};
 
-			match self.model.update(message) {
+			let Some(message) = self.model.update(message) else {
+				continue;
+			};
+			match message {
 				Cmd::Term(term_command) => {
 					let term_command: TermCommandImpl =
 						term_command.into();
