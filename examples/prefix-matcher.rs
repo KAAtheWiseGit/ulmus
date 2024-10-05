@@ -58,7 +58,6 @@ impl Model for PrefixMatcher {
 			.clone()
 			.into_iter()
 			.filter(|p| p.starts_with(&self.query))
-			.take(10)
 			.collect();
 		let matched_paths = matched_paths.join("\n");
 
