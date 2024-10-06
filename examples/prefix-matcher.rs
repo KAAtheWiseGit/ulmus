@@ -88,8 +88,9 @@ impl Model for PrefixMatcher {
 	}
 }
 
-fn main() {
+fn main() -> std::io::Result<()> {
 	let program = Program::new();
 	let mut model = PrefixMatcher::new();
-	program.run(&mut model);
+	program.run(&mut model)?;
+	Ok(())
 }
