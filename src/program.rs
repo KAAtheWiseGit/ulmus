@@ -60,25 +60,24 @@ where
 
 			let commands = self.model.update(message);
 			for command in commands {
+				#[cfg_attr(rustfmt, rustfmt_skip)]
 				match command {
-					Cmd::Term(term_command) => {
-						let term_command: TermCommandImpl =
+				Cmd::Term(term_command) => {
+					let term_command: TermCommandImpl =
 						term_command.into();
-						stdout.execute(term_command);
-					}
-					Cmd::Quit => {
-						break 'event;
-					}
-					Cmd::Subroutine(subroutine) => {
-						let sender = sender.clone();
-						let handle =
-							thread::spawn(
-								move || {
-									subroutine(sender);
-								},
-							);
-						threads.push(handle);
-					}
+					stdout.execute(term_command);
+				}
+				Cmd::Quit => {
+					break 'event;
+				}
+				Cmd::Subroutine(subroutine) => {
+					let sender = sender.clone();
+					let handle =
+						thread::spawn(move || {
+							subroutine(sender);
+						});
+					threads.push(handle);
+				}
 				}
 			}
 		}
