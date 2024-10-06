@@ -13,7 +13,7 @@ use crossterm::{
 };
 
 use std::{
-	io::{stdout, Result, Stdout, Write},
+	io::{stdout, Result, StdoutLock, Write},
 	sync::mpsc,
 	thread,
 };
@@ -41,7 +41,7 @@ impl Program {
 		M: crate::Model<CustomMsg = T>,
 		T: Send + 'static,
 	{
-		let mut stdout = stdout();
+		let mut stdout = stdout().lock();
 		let (sender, reciever) = mpsc::channel::<Msg<T>>();
 
 		// Setup the TUI view
@@ -117,7 +117,7 @@ impl Program {
 }
 
 // XXX: perhaps this should queue commands instead
-fn queue_tc(stdout: &mut Stdout, tc: TermCommand) -> Result<()> {
+fn queue_tc(stdout: &mut StdoutLock, tc: TermCommand) -> Result<()> {
 	let tc: TermCommandImpl = tc.into();
 	stdout.queue(tc)?;
 	Ok(())
@@ -151,7 +151,7 @@ where
 	})
 }
 
-fn draw(stdout: &mut Stdout, view: &str) -> Result<()> {
+fn draw(stdout: &mut StdoutLock, view: &str) -> Result<()> {
 	let height = terminal_size().unwrap().1;
 
 	stdout.queue(SavePosition)?;
