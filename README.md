@@ -31,11 +31,11 @@ For performing I/O see [`Cmd`] and [`Subroutine`].
 Ulmus interface is based on that of Bubble Tea, so they are very
 similar.  However, Rust's type system causes two differences:
 
-- Ulmus doesn't type-erase messages, so the user must implement a
-  separate type for their messages: [`CustomMsg`].
+- Ulmus doesn't type-erase messages, so the application must implement a
+  separate type for its subroutines: [`CustomMsg`].
 
-- The model is mutated in-place in `update`, since it is ensured that it
-  remains constant when `view` is called.
+- The model is mutated in-place in `update`, since it can be ensured
+  that it doesn't change when `view` is called.
 
 
 ### [Ratatui]
