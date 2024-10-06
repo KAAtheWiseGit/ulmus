@@ -52,10 +52,10 @@ impl Program {
 	{
 		let mut stdout = stdout().lock();
 		let (sender, reciever) = mpsc::channel::<Msg<T>>();
-		let top_right = if self.inline {
-			cursor::position()?
+		let top_row = if self.inline {
+			cursor::position()?.1
 		} else {
-			(0, 0)
+			0
 		};
 
 		self.init_term(&mut stdout)?;
@@ -88,7 +88,7 @@ impl Program {
 
 		'event: loop {
 			let view = model.view();
-			draw(&mut stdout, view.as_ref(), top_right)?;
+			draw(&mut stdout, view.as_ref(), top_row)?;
 			drop(view);
 
 			let Ok(message) = reciever.recv() else {
@@ -175,11 +175,11 @@ where
 	})
 }
 
-fn draw(stdout: &mut StdoutLock, view: &str, pos: (u16, u16)) -> Result<()> {
-	let height = terminal_size().unwrap().1 - pos.1;
+fn draw(stdout: &mut StdoutLock, view: &str, top_row: u16) -> Result<()> {
+	let height = terminal_size().unwrap().1 - top_row;
 
 	stdout.queue(SavePosition)?;
-	stdout.queue(MoveTo(pos.0, pos.1))?;
+	stdout.queue(MoveTo(0, top_row))?;
 
 	// Overwrite the view instead of clearing it to avoid flickering.  We do
 	// need to clear the bottom and the rest of the line, as they might've
