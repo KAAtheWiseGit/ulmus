@@ -32,8 +32,6 @@ impl Model for PrefixMatcher {
 
 	fn init(&self) -> Vec<Cmd<Self::CustomMsg>> {
 		vec![
-			// By default, Ulmus hides the cursor.  Turn it back on
-			Cmd::Term(cursor::Show.into()),
 			// Move the cursor to the start of the query
 			Cmd::Term(cursor::MoveTo(2, 0).into()),
 		]
@@ -89,8 +87,13 @@ impl Model for PrefixMatcher {
 }
 
 fn main() -> std::io::Result<()> {
-	let program = Program::default();
+	let program = Program::default()
+		// By default, Ulmus hides the cursor.  Turn it back on
+		.show_cursor();
+
 	let mut model = PrefixMatcher::new();
+
 	program.run(&mut model)?;
+
 	Ok(())
 }
