@@ -26,7 +26,7 @@ impl Program {
 		Self {}
 	}
 
-	pub fn run<M, T>(&mut self, model: &mut M)
+	pub fn run<M, T>(&self, model: &mut M)
 	where
 		M: crate::Model<CustomMsg = T>,
 		T: Send + 'static,

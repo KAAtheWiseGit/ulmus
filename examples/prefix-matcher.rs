@@ -66,7 +66,7 @@ impl Model for PrefixMatcher {
 }
 
 fn main() {
-	let mut program = Program::new();
+	let program = Program::new();
 	let mut model = PrefixMatcher::new();
 	program.run(&mut model);
 }
