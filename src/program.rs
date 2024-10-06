@@ -44,14 +44,7 @@ impl Program {
 		let mut stdout = stdout().lock();
 		let (sender, reciever) = mpsc::channel::<Msg<T>>();
 
-		// Setup the TUI view
-		stdout.execute(EnterAlternateScreen)?;
-		enable_raw_mode()?;
-		stdout.execute(Clear(ClearType::All))?;
-
-		if !self.show_cursor {
-			stdout.execute(CursorHide)?;
-		}
+		self.init_term(&mut stdout)?;
 
 		let mut threads = vec![];
 		threads.push(run_subroutine(
@@ -105,13 +98,27 @@ impl Program {
 			}
 		}
 
-		// Restore the terminal view
+		self.deinit_term(&mut stdout)?;
+
+		Ok(())
+	}
+
+	fn init_term(&self, stdout: &mut StdoutLock) -> Result<()> {
+		stdout.execute(EnterAlternateScreen)?;
+		enable_raw_mode()?;
+		stdout.execute(Clear(ClearType::All))?;
+		if !self.show_cursor {
+			stdout.execute(CursorHide)?;
+		}
+		Ok(())
+	}
+
+	fn deinit_term(&self, stdout: &mut StdoutLock) -> Result<()> {
 		if !self.show_cursor {
 			stdout.execute(CursorShow)?;
 		}
 		disable_raw_mode()?;
 		stdout.execute(LeaveAlternateScreen)?;
-
 		Ok(())
 	}
 }
