@@ -20,15 +20,22 @@ use std::{
 
 use crate::interface::{Cmd, Msg, Subroutine, TermCommand, TermCommandImpl};
 
-pub struct Program {}
+pub struct Program {
+	show_cursor: bool,
+}
 
 impl Default for Program {
 	fn default() -> Self {
-		Self {}
+		Self { show_cursor: false }
 	}
 }
 
 impl Program {
+	pub fn show_cursor(mut self) -> Self {
+		self.show_cursor = true;
+		self
+	}
+
 	pub fn run<M, T>(&self, model: &mut M) -> Result<()>
 	where
 		M: crate::Model<CustomMsg = T>,
@@ -41,7 +48,10 @@ impl Program {
 		stdout.execute(EnterAlternateScreen)?;
 		enable_raw_mode()?;
 		stdout.execute(Clear(ClearType::All))?;
-		stdout.execute(CursorHide)?;
+
+		if !self.show_cursor {
+			stdout.execute(CursorHide)?;
+		}
 
 		let mut threads = vec![];
 		threads.push(run_subroutine(
@@ -96,7 +106,9 @@ impl Program {
 		}
 
 		// Restore the terminal view
-		stdout.execute(CursorShow)?;
+		if !self.show_cursor {
+			stdout.execute(CursorShow)?;
+		}
 		disable_raw_mode()?;
 		stdout.execute(LeaveAlternateScreen)?;
 
