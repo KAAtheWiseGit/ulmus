@@ -1,14 +1,7 @@
 use crossterm::{
-	cursor::{
-		self, Hide as CursorHide, MoveTo, MoveToNextLine,
-		RestorePosition, SavePosition, Show as CursorShow,
-	},
-	event::{self, read as crossterm_read},
+	cursor, event,
 	style::Print,
-	terminal::{
-		disable_raw_mode, enable_raw_mode, size as terminal_size,
-		Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen,
-	},
+	terminal::{self, ClearType},
 	ExecutableCommand, QueueableCommand,
 };
 
@@ -110,11 +103,11 @@ impl Program {
 
 	fn init_term(&self, stdout: &mut StdoutLock) -> Result<()> {
 		if !self.inline {
-			stdout.execute(EnterAlternateScreen)?;
+			stdout.execute(terminal::EnterAlternateScreen)?;
 		}
-		enable_raw_mode()?;
+		terminal::enable_raw_mode()?;
 		if !self.show_cursor {
-			stdout.execute(CursorHide)?;
+			stdout.execute(cursor::Hide)?;
 		}
 		if self.enable_mouse {
 			stdout.execute(event::EnableMouseCapture)?;
@@ -124,11 +117,11 @@ impl Program {
 
 	fn deinit_term(&self, stdout: &mut StdoutLock) -> Result<()> {
 		if !self.show_cursor {
-			stdout.execute(CursorShow)?;
+			stdout.execute(cursor::Show)?;
 		}
-		disable_raw_mode()?;
+		terminal::disable_raw_mode()?;
 		if !self.inline {
-			stdout.execute(LeaveAlternateScreen)?;
+			stdout.execute(terminal::LeaveAlternateScreen)?;
 		}
 		if self.enable_mouse {
 			stdout.execute(event::DisableMouseCapture)?;
@@ -163,7 +156,7 @@ where
 	T: Send + 'static,
 {
 	Box::new(move |sender| {
-		while let Ok(event) = crossterm_read() {
+		while let Ok(event) = event::read() {
 			if sender.send(Msg::Term(event)).is_err() {
 				return;
 			}
@@ -172,10 +165,10 @@ where
 }
 
 fn draw(stdout: &mut StdoutLock, view: &str, top_row: u16) -> Result<()> {
-	let height = terminal_size().unwrap().1 - top_row;
+	let height = terminal::size().unwrap().1 - top_row;
 
-	stdout.queue(SavePosition)?;
-	stdout.queue(MoveTo(0, top_row))?;
+	stdout.queue(cursor::SavePosition)?;
+	stdout.queue(cursor::MoveTo(0, top_row))?;
 
 	// Overwrite the view instead of clearing it to avoid flickering.  We do
 	// need to clear the bottom and the rest of the line, as they might've
@@ -189,12 +182,14 @@ fn draw(stdout: &mut StdoutLock, view: &str, top_row: u16) -> Result<()> {
 		}
 
 		stdout.queue(Print(line))?;
-		stdout.queue(Clear(ClearType::UntilNewLine))?;
-		stdout.queue(MoveToNextLine(1))?;
+		stdout.queue(terminal::Clear(
+			terminal::ClearType::UntilNewLine,
+		))?;
+		stdout.queue(cursor::MoveToNextLine(1))?;
 	}
 
-	stdout.queue(Clear(ClearType::FromCursorDown))?;
-	stdout.queue(RestorePosition)?;
+	stdout.queue(terminal::Clear(ClearType::FromCursorDown))?;
+	stdout.queue(cursor::RestorePosition)?;
 
 	stdout.flush()?;
 
