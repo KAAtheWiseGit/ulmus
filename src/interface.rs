@@ -15,7 +15,7 @@ pub enum Cmd<T: Send + 'static> {
 	Subroutine(Subroutine<T>),
 }
 
-pub trait Model: Sized {
+pub trait Model {
 	type CustomMsg: Sized + Send + 'static;
 
 	fn init(&self) -> Vec<Cmd<Self::CustomMsg>>;
