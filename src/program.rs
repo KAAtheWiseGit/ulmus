@@ -6,7 +6,7 @@ use crossterm::{
 };
 
 use std::{
-	io::{stdout, Result, StdoutLock, Write},
+	io::{stdout, Result, Write},
 	sync::mpsc,
 	thread,
 };
@@ -115,38 +115,38 @@ impl Program {
 		Ok(())
 	}
 
-	fn init_term(&self, stdout: &mut StdoutLock) -> Result<()> {
+	fn init_term(&self, term: &mut impl Write) -> Result<()> {
 		if !self.inline {
-			stdout.execute(terminal::EnterAlternateScreen)?;
+			term.execute(terminal::EnterAlternateScreen)?;
 		}
 		terminal::enable_raw_mode()?;
 		if !self.show_cursor {
-			stdout.execute(cursor::Hide)?;
+			term.execute(cursor::Hide)?;
 		}
 		if self.enable_mouse {
-			stdout.execute(event::EnableMouseCapture)?;
+			term.execute(event::EnableMouseCapture)?;
 		}
 		Ok(())
 	}
 
-	fn deinit_term(&self, stdout: &mut StdoutLock) -> Result<()> {
+	fn deinit_term(&self, term: &mut impl Write) -> Result<()> {
 		if !self.show_cursor {
-			stdout.execute(cursor::Show)?;
+			term.execute(cursor::Show)?;
 		}
 		terminal::disable_raw_mode()?;
 		if !self.inline {
-			stdout.execute(terminal::LeaveAlternateScreen)?;
+			term.execute(terminal::LeaveAlternateScreen)?;
 		}
 		if self.enable_mouse {
-			stdout.execute(event::DisableMouseCapture)?;
+			term.execute(event::DisableMouseCapture)?;
 		}
 		Ok(())
 	}
 }
 
-fn queue_tc(stdout: &mut StdoutLock, tc: TermCommand) -> Result<()> {
+fn queue_tc(term: &mut impl Write, tc: TermCommand) -> Result<()> {
 	let tc: TermCommandImpl = tc.into();
-	stdout.queue(tc)?;
+	term.queue(tc)?;
 	Ok(())
 }
 
@@ -178,11 +178,11 @@ where
 	})
 }
 
-fn draw(stdout: &mut StdoutLock, view: &str, top_row: u16) -> Result<()> {
+fn draw(term: &mut impl Write, view: &str, top_row: u16) -> Result<()> {
 	let height = terminal::size()?.1 - top_row;
 
-	stdout.queue(cursor::SavePosition)?;
-	stdout.queue(cursor::MoveTo(0, top_row))?;
+	term.queue(cursor::SavePosition)?;
+	term.queue(cursor::MoveTo(0, top_row))?;
 
 	// Overwrite the view instead of clearing it to avoid flickering.  We do
 	// need to clear the bottom and the rest of the line, as they might've
@@ -195,17 +195,15 @@ fn draw(stdout: &mut StdoutLock, view: &str, top_row: u16) -> Result<()> {
 			break;
 		}
 
-		stdout.queue(Print(line))?;
-		stdout.queue(terminal::Clear(
-			terminal::ClearType::UntilNewLine,
-		))?;
-		stdout.queue(cursor::MoveToNextLine(1))?;
+		term.queue(Print(line))?;
+		term.queue(terminal::Clear(terminal::ClearType::UntilNewLine))?;
+		term.queue(cursor::MoveToNextLine(1))?;
 	}
 
-	stdout.queue(terminal::Clear(ClearType::FromCursorDown))?;
-	stdout.queue(cursor::RestorePosition)?;
+	term.queue(terminal::Clear(ClearType::FromCursorDown))?;
+	term.queue(cursor::RestorePosition)?;
 
-	stdout.flush()?;
+	term.flush()?;
 
 	Ok(())
 }
