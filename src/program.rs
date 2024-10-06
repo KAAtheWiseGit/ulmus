@@ -91,7 +91,6 @@ impl Program {
 					}
 				}
 			}
-			stdout.flush();
 		}
 
 		// Restore the terminal view
