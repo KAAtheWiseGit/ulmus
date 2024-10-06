@@ -1,7 +1,7 @@
 use crossterm::{
 	cursor::{
-		Hide as CursorHide, MoveTo, MoveToNextLine, RestorePosition,
-		SavePosition, Show as CursorShow,
+		self, Hide as CursorHide, MoveTo, MoveToNextLine,
+		RestorePosition, SavePosition, Show as CursorShow,
 	},
 	event::read as crossterm_read,
 	style::Print,
@@ -22,17 +22,26 @@ use crate::interface::{Cmd, Msg, Subroutine, TermCommand, TermCommandImpl};
 
 pub struct Program {
 	show_cursor: bool,
+	inline: bool,
 }
 
 impl Default for Program {
 	fn default() -> Self {
-		Self { show_cursor: false }
+		Self {
+			show_cursor: false,
+			inline: false,
+		}
 	}
 }
 
 impl Program {
 	pub fn show_cursor(mut self) -> Self {
 		self.show_cursor = true;
+		self
+	}
+
+	pub fn inline(mut self) -> Self {
+		self.inline = true;
 		self
 	}
 
@@ -43,6 +52,11 @@ impl Program {
 	{
 		let mut stdout = stdout().lock();
 		let (sender, reciever) = mpsc::channel::<Msg<T>>();
+		let top_right = if self.inline {
+			cursor::position()?
+		} else {
+			(0, 0)
+		};
 
 		self.init_term(&mut stdout)?;
 
@@ -74,7 +88,7 @@ impl Program {
 
 		'event: loop {
 			let view = model.view();
-			draw(&mut stdout, view.as_ref())?;
+			draw(&mut stdout, view.as_ref(), top_right)?;
 			drop(view);
 
 			let Ok(message) = reciever.recv() else {
@@ -104,9 +118,10 @@ impl Program {
 	}
 
 	fn init_term(&self, stdout: &mut StdoutLock) -> Result<()> {
-		stdout.execute(EnterAlternateScreen)?;
+		if !self.inline {
+			stdout.execute(EnterAlternateScreen)?;
+		}
 		enable_raw_mode()?;
-		stdout.execute(Clear(ClearType::All))?;
 		if !self.show_cursor {
 			stdout.execute(CursorHide)?;
 		}
@@ -118,7 +133,9 @@ impl Program {
 			stdout.execute(CursorShow)?;
 		}
 		disable_raw_mode()?;
-		stdout.execute(LeaveAlternateScreen)?;
+		if !self.inline {
+			stdout.execute(LeaveAlternateScreen)?;
+		}
 		Ok(())
 	}
 }
@@ -158,11 +175,11 @@ where
 	})
 }
 
-fn draw(stdout: &mut StdoutLock, view: &str) -> Result<()> {
-	let height = terminal_size().unwrap().1;
+fn draw(stdout: &mut StdoutLock, view: &str, pos: (u16, u16)) -> Result<()> {
+	let height = terminal_size().unwrap().1 - pos.1;
 
 	stdout.queue(SavePosition)?;
-	stdout.queue(MoveTo(0, 0))?;
+	stdout.queue(MoveTo(pos.0, pos.1))?;
 
 	// Overwrite the view instead of clearing it to avoid flickering.  We do
 	// need to clear the bottom and the rest of the line, as they might've
