@@ -11,8 +11,11 @@ use std::{
 	thread,
 };
 
-use crate::interface::{Cmd, Msg, Subroutine, TermCommand, TermCommandImpl};
+use crate::interface::{
+	Cmd, Model, Msg, Subroutine, TermCommand, TermCommandImpl,
+};
 
+/// A program which runs the [user model][Model].
 pub struct Program {
 	show_cursor: bool,
 	inline: bool,
@@ -20,6 +23,11 @@ pub struct Program {
 }
 
 impl Default for Program {
+	/// The default program:
+	///
+	/// - Hides the cursor.
+	/// - Uses alternate screen.
+	/// - Doesn't enable mouse or bracketed paste.
 	fn default() -> Self {
 		Self {
 			show_cursor: false,
@@ -30,24 +38,33 @@ impl Default for Program {
 }
 
 impl Program {
+	/// Don't hide the cursor.  If enabled, it becomes the
+	/// [model's][Model]
+	/// responsibility to set the cursor position.
 	pub fn show_cursor(mut self) -> Self {
 		self.show_cursor = true;
 		self
 	}
 
+	/// Runs the TUI inline, from the row it was called on to the bottom of
+	/// the terminal.  After the program finishes running only the TUI view
+	/// will be cleared.
 	pub fn inline(mut self) -> Self {
 		self.inline = true;
 		self
 	}
 
+	/// Enables receiving mouse events in [`update`][Model#tymethod.update].
 	pub fn enable_mouse(mut self) -> Self {
 		self.enable_mouse = true;
 		self
 	}
 
+	/// Runs the model.  This function will block until the model returns a
+	/// [`Cmd::Quit`] command.
 	pub fn run<M, T>(&self, model: &mut M) -> Result<()>
 	where
-		M: crate::Model<CustomMsg = T>,
+		M: Model<CustomMsg = T>,
 		T: Send + 'static,
 	{
 		let mut stdout = stdout().lock();
