@@ -17,7 +17,7 @@ use std::{
 	thread,
 };
 
-use crate::interface::{Cmd, Msg, TermCommandImpl};
+use crate::interface::{Cmd, Msg, Subroutine, TermCommand, TermCommandImpl};
 
 pub struct Program {}
 
@@ -41,7 +41,10 @@ impl Program {
 		stdout.execute(CursorHide);
 
 		let mut threads = vec![];
-		threads.push(spawn_crossterm(sender.clone()));
+		threads.push(run_subroutine(
+			crossterm_subroutine(),
+			sender.clone(),
+		));
 
 		'event: loop {
 			let view = model.view();
@@ -54,24 +57,17 @@ impl Program {
 
 			let commands = model.update(message);
 			for command in commands {
-				#[cfg_attr(rustfmt, rustfmt_skip)]
 				match command {
-				Cmd::Term(term_command) => {
-					let term_command: TermCommandImpl =
-						term_command.into();
-					stdout.execute(term_command);
-				}
-				Cmd::Quit => {
-					break 'event;
-				}
-				Cmd::Subroutine(subroutine) => {
-					let sender = sender.clone();
-					let handle =
-						thread::spawn(move || {
-							subroutine(sender);
-						});
-					threads.push(handle);
-				}
+					Cmd::Term(tc) => {
+						exec_tc(&mut stdout, tc)
+					}
+					Cmd::Quit => break 'event,
+					Cmd::Subroutine(subroutine) => {
+						run_subroutine(
+							subroutine,
+							sender.clone(),
+						);
+					}
 				}
 			}
 		}
@@ -83,11 +79,32 @@ impl Program {
 	}
 }
 
-fn spawn_crossterm<T>(sender: mpsc::Sender<Msg<T>>) -> thread::JoinHandle<()>
+// XXX: perhaps this should queue commands instead
+fn exec_tc(stdout: &mut Stdout, tc: TermCommand) {
+	let tc: TermCommandImpl = tc.into();
+	stdout.execute(tc);
+}
+
+fn run_subroutine<T>(
+	subroutine: Subroutine<T>,
+	sender: mpsc::Sender<Msg<T>>,
+) -> thread::JoinHandle<()>
 where
 	T: Send + 'static,
 {
-	thread::spawn(move || {
+	thread::spawn(move || subroutine(sender))
+}
+
+/// A subroutine which reads crossterm events.
+///
+/// # Safety
+///
+/// Only this subroutine is allowed to call crossterm's `read` or `poll`.
+fn crossterm_subroutine<T>() -> Subroutine<T>
+where
+	T: Send + 'static,
+{
+	Box::new(move |sender| {
 		while let Ok(event) = crossterm_read() {
 			if sender.send(Msg::Term(event)).is_err() {
 				return;
