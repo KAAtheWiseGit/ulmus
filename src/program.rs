@@ -178,7 +178,7 @@ where
 }
 
 fn draw(stdout: &mut StdoutLock, view: &str, top_row: u16) -> Result<()> {
-	let height = terminal::size().unwrap().1 - top_row;
+	let height = terminal::size()?.1 - top_row;
 
 	stdout.queue(cursor::SavePosition)?;
 	stdout.queue(cursor::MoveTo(0, top_row))?;
