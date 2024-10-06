@@ -1,6 +1,9 @@
 use ulmus::{Cmd, Model, Msg, Program};
 
-use crossterm::event::{Event, KeyCode};
+use crossterm::{
+	cursor,
+	event::{Event, KeyCode},
+};
 use walkdir::WalkDir;
 
 struct PrefixMatcher {
@@ -26,6 +29,11 @@ impl PrefixMatcher {
 
 impl Model for PrefixMatcher {
 	type CustomMsg = ();
+
+	fn init(&self) -> Vec<Cmd<Self::CustomMsg>> {
+		// By default, Ulmus hides the cursor.  This enables it back.
+		vec![Cmd::Term(cursor::Show.into())]
+	}
 
 	fn update(
 		&mut self,
