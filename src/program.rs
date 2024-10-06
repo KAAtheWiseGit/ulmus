@@ -140,7 +140,6 @@ impl Program {
 	}
 }
 
-// XXX: perhaps this should queue commands instead
 fn queue_tc(stdout: &mut StdoutLock, tc: TermCommand) -> Result<()> {
 	let tc: TermCommandImpl = tc.into();
 	stdout.queue(tc)?;
