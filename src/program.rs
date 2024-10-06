@@ -139,8 +139,13 @@ fn draw(stdout: &mut Stdout, view: &str) {
 	let height = terminal_size().unwrap().1;
 
 	stdout.queue(SavePosition);
-	stdout.queue(Clear(ClearType::All));
 	stdout.queue(MoveTo(0, 0));
+
+	// Overwrite the view instead of clearing it to avoid flickering.  We do
+	// need to clear the bottom and the rest of the line, as they might've
+	// not been overwritten.
+	//
+	// https://www.textualize.io/blog/7-things-ive-learned-building-a-modern-tui-framework/
 
 	for (row, line) in view.lines().enumerate() {
 		if row >= height.into() {
@@ -148,9 +153,12 @@ fn draw(stdout: &mut Stdout, view: &str) {
 		}
 
 		stdout.queue(Print(line));
+		stdout.queue(Clear(ClearType::UntilNewLine));
 		stdout.queue(MoveToNextLine(1));
 	}
 
+	stdout.queue(Clear(ClearType::FromCursorDown));
 	stdout.queue(RestorePosition);
+
 	stdout.flush();
 }
