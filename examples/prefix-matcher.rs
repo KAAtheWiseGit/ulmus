@@ -2,7 +2,7 @@ use ulmus::{Cmd, Model, Msg, Program};
 
 use crossterm::{
 	cursor,
-	event::{Event, KeyCode},
+	event::{Event, KeyCode, KeyModifiers},
 };
 use walkdir::WalkDir;
 
@@ -45,9 +45,16 @@ impl Model for PrefixMatcher {
 	) -> Vec<Cmd<Self::CustomMsg>> {
 		match message {
 			Msg::Term(Event::Key(key_event)) => {
+				let is_ctrl = key_event
+					.modifiers
+					.contains(KeyModifiers::CONTROL);
+
 				match key_event.code {
 					KeyCode::Backspace => {
 						self.query.pop();
+					}
+					KeyCode::Char('u') if is_ctrl => {
+						self.query.clear();
 					}
 					KeyCode::Char(c) => {
 						self.query.push(c);
