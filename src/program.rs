@@ -1,6 +1,7 @@
 use crossterm::{
 	cursor::{
-		Hide as CursorHide, MoveTo, MoveToNextLine, Show as CursorShow,
+		Hide as CursorHide, MoveTo, MoveToNextLine, RestorePosition,
+		SavePosition, Show as CursorShow,
 	},
 	event::read as crossterm_read,
 	style::Print,
@@ -55,7 +56,7 @@ impl Program {
 					// Quittin on `init` is weird and
 					// returning would skip cleanup, so it's
 					// ignored.
-				},
+				}
 				Cmd::Subroutine(subroutine) => {
 					run_subroutine(
 						subroutine,
@@ -135,6 +136,7 @@ where
 fn draw(stdout: &mut Stdout, view: &str) {
 	let height = terminal_size().unwrap().1;
 
+	stdout.queue(SavePosition);
 	stdout.queue(Clear(ClearType::All));
 	stdout.queue(MoveTo(0, 0));
 
@@ -147,5 +149,6 @@ fn draw(stdout: &mut Stdout, view: &str) {
 		stdout.queue(MoveToNextLine(1));
 	}
 
+	stdout.queue(RestorePosition);
 	stdout.flush();
 }
