@@ -13,7 +13,7 @@ use crossterm::{
 };
 
 use std::{
-	io::{stdout, Stdout, Write},
+	io::{stdout, Result, Stdout, Write},
 	sync::mpsc,
 	thread,
 };
@@ -27,7 +27,7 @@ impl Program {
 		Self {}
 	}
 
-	pub fn run<M, T>(&self, model: &mut M)
+	pub fn run<M, T>(&self, model: &mut M) -> Result<()>
 	where
 		M: crate::Model<CustomMsg = T>,
 		T: Send + 'static,
@@ -36,10 +36,10 @@ impl Program {
 		let (sender, reciever) = mpsc::channel::<Msg<T>>();
 
 		// Setup the TUI view
-		stdout.execute(EnterAlternateScreen);
-		enable_raw_mode().unwrap();
-		stdout.execute(Clear(ClearType::All));
-		stdout.execute(CursorHide);
+		stdout.execute(EnterAlternateScreen)?;
+		enable_raw_mode()?;
+		stdout.execute(Clear(ClearType::All))?;
+		stdout.execute(CursorHide)?;
 
 		let mut threads = vec![];
 		threads.push(run_subroutine(
@@ -51,7 +51,7 @@ impl Program {
 		for command in commands {
 			// XXX: code duplication
 			match command {
-				Cmd::Term(tc) => queue_tc(&mut stdout, tc),
+				Cmd::Term(tc) => queue_tc(&mut stdout, tc)?,
 				Cmd::Quit => {
 					// Quittin on `init` is weird and
 					// returning would skip cleanup, so it's
@@ -69,7 +69,7 @@ impl Program {
 
 		'event: loop {
 			let view = model.view();
-			draw(&mut stdout, view.as_ref());
+			draw(&mut stdout, view.as_ref())?;
 			drop(view);
 
 			let Ok(message) = reciever.recv() else {
@@ -80,7 +80,7 @@ impl Program {
 			for command in commands {
 				match command {
 					Cmd::Term(tc) => {
-						queue_tc(&mut stdout, tc)
+						queue_tc(&mut stdout, tc)?;
 					}
 					Cmd::Quit => break 'event,
 					Cmd::Subroutine(subroutine) => {
@@ -94,16 +94,19 @@ impl Program {
 		}
 
 		// Restore the terminal view
-		stdout.execute(CursorShow);
-		disable_raw_mode().unwrap();
-		stdout.execute(LeaveAlternateScreen);
+		stdout.execute(CursorShow)?;
+		disable_raw_mode()?;
+		stdout.execute(LeaveAlternateScreen)?;
+
+		Ok(())
 	}
 }
 
 // XXX: perhaps this should queue commands instead
-fn queue_tc(stdout: &mut Stdout, tc: TermCommand) {
+fn queue_tc(stdout: &mut Stdout, tc: TermCommand) -> Result<()> {
 	let tc: TermCommandImpl = tc.into();
-	stdout.queue(tc);
+	stdout.queue(tc)?;
+	Ok(())
 }
 
 fn run_subroutine<T>(
@@ -134,11 +137,11 @@ where
 	})
 }
 
-fn draw(stdout: &mut Stdout, view: &str) {
+fn draw(stdout: &mut Stdout, view: &str) -> Result<()> {
 	let height = terminal_size().unwrap().1;
 
-	stdout.queue(SavePosition);
-	stdout.queue(MoveTo(0, 0));
+	stdout.queue(SavePosition)?;
+	stdout.queue(MoveTo(0, 0))?;
 
 	// Overwrite the view instead of clearing it to avoid flickering.  We do
 	// need to clear the bottom and the rest of the line, as they might've
@@ -151,13 +154,15 @@ fn draw(stdout: &mut Stdout, view: &str) {
 			break;
 		}
 
-		stdout.queue(Print(line));
-		stdout.queue(Clear(ClearType::UntilNewLine));
-		stdout.queue(MoveToNextLine(1));
+		stdout.queue(Print(line))?;
+		stdout.queue(Clear(ClearType::UntilNewLine))?;
+		stdout.queue(MoveToNextLine(1))?;
 	}
 
-	stdout.queue(Clear(ClearType::FromCursorDown));
-	stdout.queue(RestorePosition);
+	stdout.queue(Clear(ClearType::FromCursorDown))?;
+	stdout.queue(RestorePosition)?;
 
-	stdout.flush();
+	stdout.flush()?;
+
+	Ok(())
 }
