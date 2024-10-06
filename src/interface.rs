@@ -11,7 +11,7 @@ pub type Subroutine<T> = Box<dyn FnOnce(mpsc::Sender<Msg<T>>) + Send>;
 pub enum Msg<T: Send + 'static> {
 	/// Terminal event, received via [crossterm's
 	/// `read`][crossterm::event::read].  It can be configured via
-	/// [`Program`] options or commands on
+	/// [`Program`][crate::Program] options or commands on
 	/// [`init`][Model#tymethod.init][^note].
 	///
 	///
