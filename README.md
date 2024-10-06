@@ -17,6 +17,13 @@ method will be called, and the results will be draw on the terminal.
 For performing I/O see [`Cmd`] and [`Subroutine`].
 
 
+## [Examples]
+
+- [Prefix matcher][examples-ip] --- a simple fzf-like picker.
+- [Inline picker][examples-ip] --- a TODO list picker which uses the
+  inline `Program` mode.
+
+
 ## Comparison
 
 ### Bubble Tea
@@ -57,6 +64,9 @@ Ulmus is my small weekend project.
 [`Cmd`]: https://docs.rs/ulmus/latest/ulmus/enum.Cmd.html
 [`Subroutine`]: https://docs.rs/ulmus/latest/ulmus/type.Subroutine.html
 [`CustomMsg`]: https://docs.rs/ulmus/latest/ulmus/trait.Model.html#associatedtype.CustomMsg
+[Examples]: https://codeberg.org/kaathewise/ulmus/src/branch/trunk/examples
+[examples-ip]: https://codeberg.org/kaathewise/ulmus/src/branch/trunk/examples/inline-picker.rs
+[examples-pm]: https://codeberg.org/kaathewise/ulmus/src/branch/trunk/examples/prefix-matcher.rs
 [Ratatui]: https://ratatui.rs/
 [`colored`]: https://github.com/colored-rs/colored
 [re]: https://ratatui.rs/showcase/third-party-widgets/
