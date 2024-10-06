@@ -51,7 +51,7 @@ impl Program {
 		for command in commands {
 			// XXX: code duplication
 			match command {
-				Cmd::Term(tc) => exec_tc(&mut stdout, tc),
+				Cmd::Term(tc) => queue_tc(&mut stdout, tc),
 				Cmd::Quit => {
 					// Quittin on `init` is weird and
 					// returning would skip cleanup, so it's
@@ -65,6 +65,7 @@ impl Program {
 				}
 			}
 		}
+		// `init` will be flushed by the first draw
 
 		'event: loop {
 			let view = model.view();
@@ -79,7 +80,7 @@ impl Program {
 			for command in commands {
 				match command {
 					Cmd::Term(tc) => {
-						exec_tc(&mut stdout, tc)
+						queue_tc(&mut stdout, tc)
 					}
 					Cmd::Quit => break 'event,
 					Cmd::Subroutine(subroutine) => {
@@ -90,6 +91,7 @@ impl Program {
 					}
 				}
 			}
+			stdout.flush();
 		}
 
 		// Restore the terminal view
@@ -100,9 +102,9 @@ impl Program {
 }
 
 // XXX: perhaps this should queue commands instead
-fn exec_tc(stdout: &mut Stdout, tc: TermCommand) {
+fn queue_tc(stdout: &mut Stdout, tc: TermCommand) {
 	let tc: TermCommandImpl = tc.into();
-	stdout.execute(tc);
+	stdout.queue(tc);
 }
 
 fn run_subroutine<T>(
