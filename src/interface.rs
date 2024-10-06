@@ -18,6 +18,8 @@ pub enum Cmd<T: Send + 'static> {
 pub trait Model: Sized {
 	type CustomMsg: Sized + Send + 'static;
 
+	fn init(&self) -> Vec<Cmd<Self::CustomMsg>>;
+
 	fn update(
 		&mut self,
 		message: Msg<Self::CustomMsg>,
