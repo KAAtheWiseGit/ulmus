@@ -46,6 +46,25 @@ impl Program {
 			sender.clone(),
 		));
 
+		let commands = model.init();
+		for command in commands {
+			// XXX: code duplication
+			match command {
+				Cmd::Term(tc) => exec_tc(&mut stdout, tc),
+				Cmd::Quit => {
+					// Quittin on `init` is weird and
+					// returning would skip cleanup, so it's
+					// ignored.
+				},
+				Cmd::Subroutine(subroutine) => {
+					run_subroutine(
+						subroutine,
+						sender.clone(),
+					);
+				}
+			}
+		}
+
 		'event: loop {
 			let view = model.view();
 			draw(&mut stdout, view.as_ref());
