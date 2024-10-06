@@ -39,7 +39,9 @@ pub struct TermCommandImpl(String);
 impl<T: CrosstermCommand> From<T> for TermCommand {
 	fn from(value: T) -> Self {
 		let mut buffer = String::new();
-		value.write_ansi(&mut buffer);
+		if value.write_ansi(&mut buffer).is_err() {
+			unreachable!("`String` is an infallible writer");
+		}
 		Self(buffer)
 	}
 }
