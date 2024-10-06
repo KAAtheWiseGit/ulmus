@@ -82,8 +82,6 @@ where
 			}
 		}
 
-		drop(reciever);
-
 		// Restore the terminal view
 		stdout.execute(CursorShow);
 		disable_raw_mode().unwrap();
