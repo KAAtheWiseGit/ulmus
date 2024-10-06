@@ -17,13 +17,12 @@ impl PrefixMatcher {
 			.into_iter()
 			.filter_map(|e| e.ok())
 			.map(|e| e.path().to_string_lossy().into_owned())
-			.into_iter()
 			.collect();
 
-		return Self {
+		Self {
 			query: String::new(),
 			paths,
-		};
+		}
 	}
 }
 
@@ -41,36 +40,33 @@ impl Model for PrefixMatcher {
 		&mut self,
 		message: Msg<Self::CustomMsg>,
 	) -> Vec<Cmd<Self::CustomMsg>> {
-		match message {
-			Msg::Term(Event::Key(key_event)) => {
-				let is_ctrl = key_event
-					.modifiers
-					.contains(KeyModifiers::CONTROL);
+		if let Msg::Term(Event::Key(key_event)) = message {
+			let is_ctrl = key_event
+				.modifiers
+				.contains(KeyModifiers::CONTROL);
 
-				match key_event.code {
-					KeyCode::Backspace => {
-						self.query.pop();
-					}
-					KeyCode::Char('u') if is_ctrl => {
-						self.query.clear();
-					}
-					KeyCode::Char(c) => {
-						self.query.push(c);
-					}
-					KeyCode::Esc => {
-						return vec![Cmd::Quit];
-					}
-					_ => {}
+			match key_event.code {
+				KeyCode::Backspace => {
+					self.query.pop();
 				}
+				KeyCode::Char('u') if is_ctrl => {
+					self.query.clear();
+				}
+				KeyCode::Char(c) => {
+					self.query.push(c);
+				}
+				KeyCode::Esc => {
+					return vec![Cmd::Quit];
+				}
+				_ => {}
 			}
-			_ => {}
-		}
+		};
 
 		// Moves the cursor to the end of the query.
 		let cursor_command = Cmd::Term(
 			cursor::MoveTo(self.query.len() as u16 + 2, 0).into(),
 		);
-		return vec![cursor_command];
+		vec![cursor_command]
 	}
 
 	fn view(&self) -> impl AsRef<str> {
@@ -82,7 +78,7 @@ impl Model for PrefixMatcher {
 			.collect();
 		let matched_paths = matched_paths.join("\n");
 
-		return format!("> {}\n{}", &self.query, matched_paths);
+		format!("> {}\n{}", &self.query, matched_paths)
 	}
 }
 
