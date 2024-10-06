@@ -1,9 +1,6 @@
 use ulmus::{Cmd, Model, Msg, Program};
 
-use crossterm::{
-	cursor,
-	event::{Event, KeyCode},
-};
+use crossterm::event::{Event, KeyCode};
 
 struct InlinePicker {
 	items: Vec<&'static str>,
@@ -25,10 +22,7 @@ impl Model for InlinePicker {
 	type CustomMsg = ();
 
 	fn init(&self) -> Vec<Cmd<Self::CustomMsg>> {
-		vec![
-			// Move the cursor to the start of the query
-			Cmd::Term(cursor::MoveTo(2, 0).into()),
-		]
+		vec![]
 	}
 
 	fn update(
