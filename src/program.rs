@@ -76,6 +76,7 @@ impl Program {
 			0
 		};
 
+		set_panic_hook(self.clone());
 		self.init_term(&mut stdout)?;
 
 		run_subroutine(crossterm_subroutine(), sender.clone());
@@ -206,4 +207,14 @@ fn draw(term: &mut impl Write, view: &str, top_row: u16) -> Result<()> {
 	term.flush()?;
 
 	Ok(())
+}
+
+fn set_panic_hook(program: Program) {
+	let old_hook = std::panic::take_hook();
+	std::panic::set_hook(Box::new(move |info| {
+		if program.deinit_term(&mut stdout()).is_err() {
+			eprintln!("Sorry, failed to restore terminal.  It'll probably be all jumbled up now.")
+		};
+		old_hook(info);
+	}))
 }
