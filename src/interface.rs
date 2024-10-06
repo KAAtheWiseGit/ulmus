@@ -2,7 +2,7 @@ use crossterm::{event::Event as CrosstermEvent, Command as CrosstermCommand};
 
 use std::sync::mpsc;
 
-type Subroutine<T> = Box<dyn FnOnce(mpsc::Sender<Msg<T>>) + Send>;
+pub type Subroutine<T> = Box<dyn FnOnce(mpsc::Sender<Msg<T>>) + Send>;
 
 pub enum Msg<T: Send + 'static> {
 	Term(CrosstermEvent),
