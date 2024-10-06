@@ -10,11 +10,11 @@ struct InlinePicker {
 
 impl InlinePicker {
 	fn new() -> Self {
-		return Self {
+		Self {
 			items: vec!["Apples", "Lemons", "Watermelons"],
-			picks: vec![false].repeat(3),
+			picks: [false].repeat(3),
 			focus: 0,
-		};
+		}
 	}
 }
 
@@ -29,33 +29,30 @@ impl Model for InlinePicker {
 		&mut self,
 		message: Msg<Self::CustomMsg>,
 	) -> Vec<Cmd<Self::CustomMsg>> {
-		match message {
-			Msg::Term(Event::Key(key_event)) => {
-				match key_event.code {
-					KeyCode::Esc => {
-						return vec![Cmd::Quit];
-					}
-					KeyCode::Down => {
-						if self.focus < 2 {
-							self.focus += 1;
-						}
-					}
-					KeyCode::Up => {
-						if self.focus > 0 {
-							self.focus -= 1;
-						}
-					}
-					KeyCode::Enter | KeyCode::Char(' ') => {
-						// flip
-						self.picks[self.focus] ^= true;
-					}
-					_ => {}
+		if let Msg::Term(Event::Key(key_event)) = message {
+			match key_event.code {
+				KeyCode::Esc => {
+					return vec![Cmd::Quit];
 				}
+				KeyCode::Down => {
+					if self.focus < 2 {
+						self.focus += 1;
+					}
+				}
+				KeyCode::Up => {
+					if self.focus > 0 {
+						self.focus -= 1;
+					}
+				}
+				KeyCode::Enter | KeyCode::Char(' ') => {
+					// flip
+					self.picks[self.focus] ^= true;
+				}
+				_ => {}
 			}
-			_ => {}
-		}
+		};
 
-		return vec![];
+		vec![]
 	}
 
 	fn view(&self) -> impl AsRef<str> {
@@ -71,7 +68,7 @@ impl Model for InlinePicker {
 			);
 		}
 
-		return out;
+		out
 	}
 }
 
