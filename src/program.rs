@@ -22,11 +22,13 @@ use crate::interface::{Cmd, Msg, Subroutine, TermCommand, TermCommandImpl};
 
 pub struct Program {}
 
-impl Program {
-	pub fn new() -> Self {
+impl Default for Program {
+	fn default() -> Self {
 		Self {}
 	}
+}
 
+impl Program {
 	pub fn run<M, T>(&self, model: &mut M) -> Result<()>
 	where
 		M: crate::Model<CustomMsg = T>,
