@@ -3,7 +3,7 @@ use crossterm::{
 		self, Hide as CursorHide, MoveTo, MoveToNextLine,
 		RestorePosition, SavePosition, Show as CursorShow,
 	},
-	event::read as crossterm_read,
+	event::{self, read as crossterm_read},
 	style::Print,
 	terminal::{
 		disable_raw_mode, enable_raw_mode, size as terminal_size,
@@ -23,6 +23,7 @@ use crate::interface::{Cmd, Msg, Subroutine, TermCommand, TermCommandImpl};
 pub struct Program {
 	show_cursor: bool,
 	inline: bool,
+	enable_mouse: bool,
 }
 
 impl Default for Program {
@@ -30,6 +31,7 @@ impl Default for Program {
 		Self {
 			show_cursor: false,
 			inline: false,
+			enable_mouse: false,
 		}
 	}
 }
@@ -42,6 +44,11 @@ impl Program {
 
 	pub fn inline(mut self) -> Self {
 		self.inline = true;
+		self
+	}
+
+	pub fn enable_mouse(mut self) -> Self {
+		self.enable_mouse = true;
 		self
 	}
 
@@ -109,6 +116,9 @@ impl Program {
 		if !self.show_cursor {
 			stdout.execute(CursorHide)?;
 		}
+		if self.enable_mouse {
+			stdout.execute(event::EnableMouseCapture)?;
+		}
 		Ok(())
 	}
 
@@ -119,6 +129,9 @@ impl Program {
 		disable_raw_mode()?;
 		if !self.inline {
 			stdout.execute(LeaveAlternateScreen)?;
+		}
+		if self.enable_mouse {
+			stdout.execute(event::DisableMouseCapture)?;
 		}
 		Ok(())
 	}
