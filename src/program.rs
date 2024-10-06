@@ -19,24 +19,18 @@ use std::{
 
 use crate::interface::{Cmd, Msg, TermCommandImpl};
 
-pub struct Program<M, T>
-where
-	M: crate::Model<CustomMsg = T>,
-	T: Send + 'static,
-{
-	model: M,
-}
+pub struct Program {}
 
-impl<M, T> Program<M, T>
-where
-	M: crate::Model<CustomMsg = T>,
-	T: Send + 'static,
-{
-	pub fn new(model: M) -> Self {
-		Self { model }
+impl Program {
+	pub fn new() -> Self {
+		Self {}
 	}
 
-	pub fn run(&mut self) {
+	pub fn run<M, T>(&mut self, model: &mut M)
+	where
+		M: crate::Model<CustomMsg = T>,
+		T: Send + 'static,
+	{
 		let mut stdout = stdout();
 		let (sender, reciever) = mpsc::channel::<Msg<T>>();
 
@@ -50,7 +44,7 @@ where
 		threads.push(spawn_crossterm(sender.clone()));
 
 		'event: loop {
-			let view = self.model.view();
+			let view = model.view();
 			draw(&mut stdout, view.as_ref());
 			drop(view);
 
@@ -58,7 +52,7 @@ where
 				break;
 			};
 
-			let commands = self.model.update(message);
+			let commands = model.update(message);
 			for command in commands {
 				#[cfg_attr(rustfmt, rustfmt_skip)]
 				match command {
