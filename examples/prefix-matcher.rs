@@ -31,8 +31,12 @@ impl Model for PrefixMatcher {
 	type CustomMsg = ();
 
 	fn init(&self) -> Vec<Cmd<Self::CustomMsg>> {
-		// By default, Ulmus hides the cursor.  This enables it back.
-		vec![Cmd::Term(cursor::Show.into())]
+		vec![
+			// By default, Ulmus hides the cursor.  Turn it back on
+			Cmd::Term(cursor::Show.into()),
+			// Move the cursor to the start of the query
+			Cmd::Term(cursor::MoveTo(2, 0).into()),
+		]
 	}
 
 	fn update(
@@ -57,7 +61,11 @@ impl Model for PrefixMatcher {
 			_ => {}
 		}
 
-		return vec![];
+		// Moves the cursor to the end of the query.
+		let cursor_command = Cmd::Term(
+			cursor::MoveTo(self.query.len() as u16 + 2, 0).into(),
+		);
+		return vec![cursor_command];
 	}
 
 	fn view(&self) -> impl AsRef<str> {
