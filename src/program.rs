@@ -16,6 +16,7 @@ use crate::interface::{
 };
 
 /// A program which runs the [user model][Model].
+#[derive(Clone, Copy)]
 pub struct Program {
 	show_cursor: bool,
 	inline: bool,
