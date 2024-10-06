@@ -21,7 +21,7 @@ pub trait Model: Sized {
 	fn update(
 		&mut self,
 		message: Msg<Self::CustomMsg>,
-	) -> Option<Cmd<Self::CustomMsg>>;
+	) -> Vec<Cmd<Self::CustomMsg>>;
 
 	fn view(&self) -> impl AsRef<str>;
 }

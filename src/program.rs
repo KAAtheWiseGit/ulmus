@@ -49,7 +49,7 @@ where
 		let mut threads = vec![];
 		threads.push(spawn_crossterm(sender.clone()));
 
-		loop {
+		'event: loop {
 			let view = self.model.view();
 			draw(&mut stdout, view.as_ref());
 			drop(view);
@@ -58,24 +58,27 @@ where
 				break;
 			};
 
-			let Some(command) = self.model.update(message) else {
-				continue;
-			};
-			match command {
-				Cmd::Term(term_command) => {
-					let term_command: TermCommandImpl =
+			let commands = self.model.update(message);
+			for command in commands {
+				match command {
+					Cmd::Term(term_command) => {
+						let term_command: TermCommandImpl =
 						term_command.into();
-					stdout.execute(term_command);
-				}
-				Cmd::Quit => {
-					break;
-				}
-				Cmd::Subroutine(subroutine) => {
-					let sender = sender.clone();
-					let handle = thread::spawn(move || {
-						subroutine(sender);
-					});
-					threads.push(handle);
+						stdout.execute(term_command);
+					}
+					Cmd::Quit => {
+						break 'event;
+					}
+					Cmd::Subroutine(subroutine) => {
+						let sender = sender.clone();
+						let handle =
+							thread::spawn(
+								move || {
+									subroutine(sender);
+								},
+							);
+						threads.push(handle);
+					}
 				}
 			}
 		}
