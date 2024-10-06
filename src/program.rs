@@ -66,40 +66,15 @@ impl Program {
 			sender.clone(),
 		));
 
-		let commands = model.init();
-		for command in commands {
-			// XXX: code duplication
-			match command {
-				Cmd::Term(tc) => queue_tc(&mut stdout, tc)?,
-				Cmd::Quit => {
-					// Quittin on `init` is weird and
-					// returning would skip cleanup, so it's
-					// ignored.
-				}
-				Cmd::Subroutine(subroutine) => {
-					run_subroutine(
-						subroutine,
-						sender.clone(),
-					);
-				}
-			}
-		}
-		// `init` will be flushed by the first draw
+		let mut commands = model.init();
 
 		'event: loop {
-			let view = model.view();
-			draw(&mut stdout, view.as_ref(), top_row)?;
-			drop(view);
-
-			let Ok(message) = reciever.recv() else {
-				break;
-			};
-
-			let commands = model.update(message);
-			for command in commands {
+			// A hack to move commands into the loop
+			let iter = commands;
+			for command in iter {
 				match command {
 					Cmd::Term(tc) => {
-						queue_tc(&mut stdout, tc)?;
+						queue_tc(&mut stdout, tc)?
 					}
 					Cmd::Quit => break 'event,
 					Cmd::Subroutine(subroutine) => {
@@ -110,6 +85,15 @@ impl Program {
 					}
 				}
 			}
+
+			let view = model.view();
+			draw(&mut stdout, view.as_ref(), top_row)?;
+			drop(view);
+
+			let Ok(message) = reciever.recv() else {
+				break;
+			};
+			commands = model.update(message);
 		}
 
 		self.deinit_term(&mut stdout)?;
