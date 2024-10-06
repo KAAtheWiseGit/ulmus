@@ -77,11 +77,7 @@ impl Program {
 
 		self.init_term(&mut stdout)?;
 
-		let mut threads = vec![];
-		threads.push(run_subroutine(
-			crossterm_subroutine(),
-			sender.clone(),
-		));
+		run_subroutine(crossterm_subroutine(), sender.clone());
 
 		let mut commands = model.init();
 
