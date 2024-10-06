@@ -104,9 +104,9 @@ impl<T: CrosstermCommand> From<T> for TermCommand {
 	}
 }
 
-impl Into<TermCommandImpl> for TermCommand {
-	fn into(self) -> TermCommandImpl {
-		TermCommandImpl(self.0)
+impl From<TermCommand> for TermCommandImpl {
+	fn from(val: TermCommand) -> Self {
+		TermCommandImpl(val.0)
 	}
 }
 
