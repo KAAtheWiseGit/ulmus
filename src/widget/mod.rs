@@ -1,5 +1,7 @@
+mod border;
 mod text;
 
+pub use border::Border;
 pub use text::Text;
 
 use crate::{Cmd, Msg};
