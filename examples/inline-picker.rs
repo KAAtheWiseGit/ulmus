@@ -1,4 +1,4 @@
-use ulmus::{Cmd, IntoCommand, Model, Msg, Program, Reactive, View};
+use ulmus::{widget::Text, Cmd, Model, Msg, Program, Reactive};
 
 use crossterm::event::{Event, KeyCode};
 
@@ -21,6 +21,22 @@ impl InlinePicker {
 impl Model for InlinePicker {
 	fn init(&self) -> Vec<Cmd<Self::CustomMsg>> {
 		vec![]
+	}
+
+	fn view(&self) -> impl crossterm::Command {
+		let mut out = String::new();
+
+		for i in 0..self.items.len() {
+			let cursor = if self.focus == i { ">" } else { " " };
+			let picked = if self.picks[i] { "x" } else { " " };
+
+			out += &format!(
+				" {cursor} [{picked}] {}\n",
+				self.items[i]
+			);
+		}
+
+		Text::from(out)
 	}
 }
 
@@ -55,24 +71,6 @@ impl Reactive for InlinePicker {
 		};
 
 		vec![]
-	}
-}
-
-impl View for InlinePicker {
-	fn view(&self) -> impl IntoCommand {
-		let mut out = String::new();
-
-		for i in 0..self.items.len() {
-			let cursor = if self.focus == i { ">" } else { " " };
-			let picked = if self.picks[i] { "x" } else { " " };
-
-			out += &format!(
-				" {cursor} [{picked}] {}\n",
-				self.items[i]
-			);
-		}
-
-		out
 	}
 }
 
