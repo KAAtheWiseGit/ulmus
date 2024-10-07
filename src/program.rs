@@ -1,9 +1,4 @@
-use crossterm::{
-	cursor, event,
-	style::Print,
-	terminal::{self, ClearType},
-	ExecutableCommand, QueueableCommand,
-};
+use crossterm::{cursor, event, terminal, ExecutableCommand, QueueableCommand};
 
 use std::{
 	io::{stdout, Result, Write},
@@ -12,7 +7,7 @@ use std::{
 };
 
 use crate::reactive::TermCommandImpl;
-use crate::{Cmd, Model, Msg, Subroutine, TermCommand, IntoCommand};
+use crate::{Cmd, IntoCommand, Model, Msg, Subroutine, TermCommand};
 
 /// A program which runs the [user model][Model].
 #[derive(Clone, Copy)]
@@ -178,36 +173,6 @@ where
 			}
 		}
 	})
-}
-
-fn draw(term: &mut impl Write, view: &str, top_row: u16) -> Result<()> {
-	let height = terminal::size()?.1 - top_row;
-
-	term.queue(cursor::SavePosition)?;
-	term.queue(cursor::MoveTo(0, top_row))?;
-
-	// Overwrite the view instead of clearing it to avoid flickering.  We do
-	// need to clear the bottom and the rest of the line, as they might've
-	// not been overwritten.
-	//
-	// https://www.textualize.io/blog/7-things-ive-learned-building-a-modern-tui-framework/
-
-	for (row, line) in view.lines().enumerate() {
-		if row >= height.into() {
-			break;
-		}
-
-		term.queue(Print(line))?;
-		term.queue(terminal::Clear(terminal::ClearType::UntilNewLine))?;
-		term.queue(cursor::MoveToNextLine(1))?;
-	}
-
-	term.queue(terminal::Clear(ClearType::FromCursorDown))?;
-	term.queue(cursor::RestorePosition)?;
-
-	term.flush()?;
-
-	Ok(())
 }
 
 fn set_panic_hook(program: Program) {
