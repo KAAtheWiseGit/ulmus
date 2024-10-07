@@ -12,7 +12,7 @@ use std::{
 };
 
 use crate::reactive::TermCommandImpl;
-use crate::{Cmd, Model, Msg, Subroutine, TermCommand};
+use crate::{Cmd, Model, Msg, Subroutine, TermCommand, IntoCommand};
 
 /// A program which runs the [user model][Model].
 #[derive(Clone, Copy)]
@@ -100,9 +100,11 @@ impl Program {
 				}
 			}
 
-			let view = model.into_command();
-			stdout.queue(view)?;
+			let view = model.view();
+			let cmd = view.into_command();
+			stdout.queue(cmd)?;
 			stdout.flush()?;
+			drop(view);
 
 			let Ok(message) = reciever.recv() else {
 				break;
