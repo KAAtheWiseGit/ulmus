@@ -1,4 +1,4 @@
-use crate::{Reactive};
+use crate::Reactive;
 
 /// A trait which describes a composable widget.
 pub trait Widget: Reactive + crossterm::Command {
@@ -24,15 +24,4 @@ pub trait Widget: Reactive + crossterm::Command {
 	///
 	/// [`height`]: Widget#tymethod.height
 	fn height(&self) -> usize;
-
-	/// Returns an iterator over the textual lines of a widget.
-	///
-	/// The widget **must** guarantee that the iterator has exactly the
-	/// number of rows set in [`set_height`] and each line, after being
-	/// displayed, takes up exactly the number of columns set in
-	/// [`set_width`].
-	///
-	/// [`set_width`]: Widget#tymethod.set_width
-	/// [`set_height`]: Widget#tymethod.set_height
-	fn lines(&self) -> impl Iterator<Item = &str>;
 }
