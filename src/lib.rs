@@ -2,6 +2,7 @@
 
 mod interface;
 mod program;
+mod view;
 pub mod widget;
 
 pub use interface::{Cmd, Model, Msg, Subroutine, TermCommand};
