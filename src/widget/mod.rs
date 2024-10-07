@@ -2,8 +2,6 @@ use crate::{Reactive, View};
 
 /// A trait which describes a composable widget.
 pub trait Widget: Reactive + View {
-	type WidgetMsg: Sized + Send + 'static;
-
 	/// Sets the display width of the widget to exactly `width`.  If the
 	/// widget is smaller than that, it should pad or stretch.
 	///
@@ -37,23 +35,4 @@ pub trait Widget: Reactive + View {
 	/// [`set_width`]: Widget#tymethod.set_width
 	/// [`set_height`]: Widget#tymethod.set_height
 	fn lines(&self) -> impl Iterator<Item = &str>;
-
-	/// Returns the view of the widget as a whole.  Has a default
-	/// implementation, which uses `lines`, which should be sufficient.
-	///
-	/// It's a utility method, which can be used to pass a widget to
-	/// [`Model.view`].
-	///
-	/// [`Model.view`]: crate::Model#tymethod.view
-	fn as_string_view(&self) -> impl AsRef<str> {
-		// +1 for the newline character
-		let capacity = (self.width() + 1) * self.height();
-		let mut out = String::with_capacity(capacity);
-
-		for line in self.lines() {
-			out.push_str(line.as_ref());
-		}
-
-		out
-	}
 }
