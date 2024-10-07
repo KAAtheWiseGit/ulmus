@@ -1,7 +1,7 @@
-use crate::{Reactive, View};
+use crate::{Reactive};
 
 /// A trait which describes a composable widget.
-pub trait Widget: Reactive + View {
+pub trait Widget: Reactive + crossterm::Command {
 	/// Sets the display width of the widget to exactly `width`.  If the
 	/// widget is smaller than that, it should pad or stretch.
 	///

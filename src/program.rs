@@ -96,7 +96,7 @@ impl Program {
 				}
 			}
 
-			let cmd = model.as_command();
+			let cmd = model.view();
 			stdout.queue(cmd)?;
 			stdout.flush()?;
 
