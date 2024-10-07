@@ -1,3 +1,7 @@
+mod text;
+
+pub use text::Text;
+
 use crate::Reactive;
 
 /// A trait which describes a composable widget.
