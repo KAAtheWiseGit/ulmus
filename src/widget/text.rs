@@ -1,6 +1,9 @@
 use crossterm::cursor;
 
-use std::fmt::{Result, Write};
+use std::{
+	cmp::Ordering,
+	fmt::{Result, Write},
+};
 
 use super::Widget;
 use crate::{Cmd, Msg, Reactive};
@@ -86,18 +89,22 @@ impl crossterm::Command for Text {
 fn fit_write_str(s: &str, len: usize, f: &mut impl Write) -> Result {
 	let s_len = s.chars().count();
 
-	if s_len < len {
-		f.write_str(s)?;
-		f.write_str(&" ".repeat(len - s_len))?;
-	} else if s_len > len {
-		for (i, ch) in s.chars().enumerate() {
-			if i == len {
-				break;
-			}
-			f.write_char(ch)?;
+	match s_len.cmp(&len) {
+		Ordering::Less => {
+			f.write_str(s)?;
+			f.write_str(&" ".repeat(len - s_len))?;
 		}
-	} else {
-		f.write_str(s)?;
+		Ordering::Greater => {
+			for (i, ch) in s.chars().enumerate() {
+				if i == len {
+					break;
+				}
+				f.write_char(ch)?;
+			}
+		}
+		Ordering::Equal => {
+			f.write_str(s)?;
+		}
 	}
 
 	Ok(())
