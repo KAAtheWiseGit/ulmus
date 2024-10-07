@@ -71,7 +71,7 @@ impl Program {
 			0
 		};
 
-		set_panic_hook(self.clone());
+		set_panic_hook(*self);
 		self.init_term(&mut stdout)?;
 
 		run_subroutine(crossterm_subroutine(), sender.clone());
