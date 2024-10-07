@@ -2,7 +2,7 @@ use crossterm::cursor;
 
 use std::fmt::{self, Write};
 
-trait View {
+pub trait View {
 	type IntoCommand<'a>: crossterm::Command
 	where
 		Self: 'a;
