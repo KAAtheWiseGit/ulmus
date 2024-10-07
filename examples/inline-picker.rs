@@ -1,4 +1,4 @@
-use ulmus::{Cmd, Model, Msg, Program};
+use ulmus::{Cmd, IntoCommand, Model, Msg, Program, Reactive, View};
 
 use crossterm::event::{Event, KeyCode};
 
@@ -19,11 +19,13 @@ impl InlinePicker {
 }
 
 impl Model for InlinePicker {
-	type CustomMsg = ();
-
 	fn init(&self) -> Vec<Cmd<Self::CustomMsg>> {
 		vec![]
 	}
+}
+
+impl Reactive for InlinePicker {
+	type CustomMsg = ();
 
 	fn update(
 		&mut self,
@@ -54,8 +56,10 @@ impl Model for InlinePicker {
 
 		vec![]
 	}
+}
 
-	fn view(&self) -> impl AsRef<str> {
+impl View for InlinePicker {
+	fn view(&self) -> impl IntoCommand {
 		let mut out = String::new();
 
 		for i in 0..self.items.len() {
