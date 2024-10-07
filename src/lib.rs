@@ -2,6 +2,7 @@
 
 mod interface;
 mod program;
+mod reactive;
 mod view;
 pub mod widget;
 
