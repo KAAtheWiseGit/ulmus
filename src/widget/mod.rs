@@ -22,10 +22,10 @@ pub trait Widget: Reactive + crossterm::Command {
 	/// `set_width`, this method must return the same value.  If `set_width`
 	/// wasn't called or called with `None`, it must return the display
 	/// width of lines which will be returned by `lines`.
-	fn width(&self) -> usize;
+	fn get_width(&self) -> usize;
 
 	/// Analogous to [`height`].
 	///
 	/// [`height`]: Widget#tymethod.height
-	fn height(&self) -> usize;
+	fn get_height(&self) -> usize;
 }

@@ -45,7 +45,7 @@ impl Widget for Text {
 		self.height = height;
 	}
 
-	fn width(&self) -> usize {
+	fn get_width(&self) -> usize {
 		self.width.unwrap_or(
 			self.content
 				.lines()
@@ -57,7 +57,7 @@ impl Widget for Text {
 		)
 	}
 
-	fn height(&self) -> usize {
+	fn get_height(&self) -> usize {
 		if let Some(height) = self.height {
 			return height;
 		}
@@ -78,7 +78,7 @@ impl crossterm::Command for Text {
 				cursor::MoveDown(i as u16).write_ansi(f)?;
 			}
 
-			fit_write_str(line, self.width(), f)?;
+			fit_write_str(line, self.get_width(), f)?;
 			cursor::RestorePosition.write_ansi(f)?;
 		}
 
