@@ -1,20 +1,8 @@
-mod border;
-mod text;
-
-pub use border::Border;
-pub use text::Text;
-
-use crate::{Cmd, Msg};
+use crate::{Reactive, View};
 
 /// A trait which describes a composable widget.
-pub trait Widget {
+pub trait Widget: Reactive + View {
 	type WidgetMsg: Sized + Send + 'static;
-
-	/// Updates the widget state.  This method
-	fn update(
-		&mut self,
-		message: Msg<Self::WidgetMsg>,
-	) -> Vec<Cmd<Self::WidgetMsg>>;
 
 	/// Sets the display width of the widget to exactly `width`.  If the
 	/// widget is smaller than that, it should pad or stretch.

@@ -64,6 +64,7 @@ impl Program {
 	{
 		let mut stdout = stdout().lock();
 		let (sender, reciever) = mpsc::channel::<Msg<T>>();
+		#[allow(unused)]
 		let top_row = if self.inline {
 			cursor::position()?.1
 		} else {
