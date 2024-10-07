@@ -6,5 +6,7 @@ mod reactive;
 mod view;
 pub mod widget;
 
-pub use interface::{Cmd, Model, Msg, Subroutine, TermCommand};
+pub use model::Model;
 pub use program::Program;
+pub use reactive::{Cmd, Msg, Reactive, Subroutine, TermCommand};
+pub use view::View;

@@ -1,7 +1,4 @@
-use crate::{
-	reactive::{Cmd, Reactive},
-	view::View,
-};
+use crate::{Cmd, Reactive, View};
 
 /// The `Model` trait describes the behaviour of your TUI.
 pub trait Model: Reactive + View {
