@@ -3,6 +3,10 @@ use crossterm::cursor;
 use std::fmt::{self, Write};
 
 pub trait View {
+	fn view(&self) -> impl IntoCommand;
+}
+
+pub trait IntoCommand {
 	type IntoCommand<'a>: crossterm::Command
 	where
 		Self: 'a;
@@ -10,7 +14,7 @@ pub trait View {
 	fn into_command(&self) -> Self::IntoCommand<'_>;
 }
 
-impl<T: AsRef<str>> View for T {
+impl<T: AsRef<str>> IntoCommand for T {
 	type IntoCommand<'a> = StrView<'a> where Self: 'a;
 
 	fn into_command(&self) -> Self::IntoCommand<'_> {
@@ -18,7 +22,7 @@ impl<T: AsRef<str>> View for T {
 	}
 }
 
-struct StrView<'a> {
+pub struct StrView<'a> {
 	source: &'a str,
 }
 

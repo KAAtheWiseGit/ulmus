@@ -9,4 +9,4 @@ pub mod widget;
 pub use model::Model;
 pub use program::Program;
 pub use reactive::{Cmd, Msg, Reactive, Subroutine, TermCommand};
-pub use view::View;
+pub use view::{IntoCommand, View};
