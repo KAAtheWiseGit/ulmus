@@ -1,6 +1,6 @@
 #![doc = include_str!("../README.md")]
 
-mod interface;
+mod model;
 mod program;
 mod reactive;
 mod view;
