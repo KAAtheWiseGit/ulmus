@@ -22,7 +22,7 @@ impl Default for Program {
 	///
 	/// - Hides the cursor.
 	/// - Uses alternate screen.
-	/// - Doesn't enable mouse or bracketed paste.
+	/// - Doesn't enable mouse or bracketed paste events.
 	fn default() -> Self {
 		Self {
 			show_cursor: false,
