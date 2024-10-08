@@ -31,7 +31,7 @@ impl crossterm::Command for ViewCommand {
 }
 
 impl View {
-	pub(crate) fn as_command(self) -> ViewCommand {
+	pub(crate) fn to_command(self) -> ViewCommand {
 		ViewCommand {
 			buffer: self.buffer,
 		}
