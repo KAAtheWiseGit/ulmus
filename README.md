@@ -19,7 +19,6 @@ For performing I/O see [`Cmd`] and [`Subroutine`].
 
 ## [Examples]
 
-- [Prefix matcher][examples-ip] — a simple fzf-like picker.
 - [Inline picker][examples-ip] — a TODO list picker which uses the
   inline `Program` mode.
 
