@@ -49,37 +49,3 @@ pub enum Command {
 pub trait Reactive {
 	fn update(&mut self, message: Message) -> Vec<Command>;
 }
-
-/// A conversion type, required because crossterm's [`Command`][cmd] is not
-/// object-safe.  It's only used to send crossterm commands via [`Cmd::Term`].
-///
-/// [cmd]: crossterm::Command
-pub struct TermCommand(String);
-
-/// A hacky workaround because `TermCommand` can't implement `From<T:
-/// CrosstermCommand>` and `CrosstermCommand` at  the same time, as it causes it
-/// to conflict with the `From<T> for T` implementation from the standard
-/// library.
-pub struct TermCommandImpl(String);
-
-impl<T: crossterm::Command> From<T> for TermCommand {
-	fn from(value: T) -> Self {
-		let mut buffer = String::new();
-		if value.write_ansi(&mut buffer).is_err() {
-			unreachable!("`String` is an infallible writer");
-		}
-		Self(buffer)
-	}
-}
-
-impl From<TermCommand> for TermCommandImpl {
-	fn from(val: TermCommand) -> Self {
-		TermCommandImpl(val.0)
-	}
-}
-
-impl crossterm::Command for TermCommandImpl {
-	fn write_ansi(&self, f: &mut impl std::fmt::Write) -> std::fmt::Result {
-		f.write_str(&self.0)
-	}
-}

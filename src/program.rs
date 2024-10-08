@@ -6,8 +6,7 @@ use std::{
 	thread,
 };
 
-use crate::reactive::TermCommandImpl;
-use crate::{Command, Message, Model, Subroutine, TermCommand};
+use crate::{Command, Message, Model, Subroutine};
 
 /// A program which runs the [user model][Model].
 #[derive(Clone, Copy)]
