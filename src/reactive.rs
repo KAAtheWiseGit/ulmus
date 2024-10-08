@@ -1,33 +1,17 @@
 use crossterm::{event::Event as CrosstermEvent, Command as CrosstermCommand};
 
-use std::sync::mpsc;
+use std::{any::Any, sync::mpsc};
 
-/// A task launched in a separate thread.  Using the passed sender it can send
-/// model's [custom messages][Model#associatedtype.CustomMsg] back to the main
-/// thread, passing them to [`update`][Model#tymethod.update].
-pub type Subroutine<T> = Box<dyn FnOnce(mpsc::Sender<Msg<T>>) + Send>;
+pub type Subroutine = Box<dyn FnOnce(mpsc::Sender<Message>) + Send>;
 
-/// A message from the framework to the user model.
-pub enum Msg<T: Send + 'static> {
-	/// Terminal event, received via [crossterm's
-	/// `read`][crossterm::event::read].  It can be configured via
-	/// [`Program`][crate::Program] options or commands on
-	/// [`init`][Model#tymethod.init][^note].
-	///
-	///
-	/// [^note]: Technically, it can be sent with any `Cmd`, even inside
-	///   [`update`][Model#tymethod.update].  This can be used to
-	///   dynamically enable and disable mouse or bracketed paste.
-	Term(CrosstermEvent),
-	/// A custom message, sent by one of the launched
-	/// [subroutine][`Subroutine`].
-	Custom(T),
+pub struct Message {
+	value: Box<dyn Any>,
 }
 
 /// Commands are returned by model in [`init`][Model#tymethod.init] and
 /// [`update`][Model#tymethod.update] and can be used to change control the
 /// event loop.
-pub enum Cmd<T: Send + 'static> {
+pub enum Command {
 	/// Execute an arbitrary [crossterm command][crossterm::Command].
 	/// Because the latter isn't object-safe, commands must be converted
 	/// into [`TermCommand`] first.
@@ -41,25 +25,11 @@ pub enum Cmd<T: Send + 'static> {
 	/// Launches a subroutine.  Note that this command can be sent at any
 	/// time, even in [`update`][Model#tymethod.update] and that the
 	/// subroutine can start sending messages immediately.
-	Subroutine(Subroutine<T>),
+	Subroutine(Subroutine),
 }
 
 pub trait Reactive {
-	/// A custom message, which can be returned by user-launched
-	/// [subroutines][`Subroutine`].  If there are several possible
-	/// messages, `CustomMsg` should probably be an enum wrapping all of
-	/// them.
-	///
-	/// As it will be sent across thread boundaries, it has to be `Send` and
-	/// `'static`.
-	type CustomMsg: Sized + Send + 'static;
-
-	/// Updates the model in response to a [message][`Msg`].  This is the
-	/// only time in the model's lifecycle when it can be mutated.
-	fn update(
-		&mut self,
-		message: Msg<Self::CustomMsg>,
-	) -> Vec<Cmd<Self::CustomMsg>>;
+	fn update(&mut self, message: Message) -> Vec<Command>;
 }
 
 /// A conversion type, required because crossterm's [`Command`][cmd] is not
