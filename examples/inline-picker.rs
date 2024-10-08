@@ -1,4 +1,4 @@
-use ulmus::{widget::Text, Command, Message, Model, Program, Reactive};
+use ulmus::{widget::Text, Command, Message, Model, Program, Reactive, View};
 
 use crossterm::event::{Event, KeyCode};
 
@@ -23,7 +23,7 @@ impl Model for InlinePicker {
 		vec![]
 	}
 
-	fn view(&self) -> impl crossterm::Command {
+	fn view(&self) -> View {
 		let mut out = String::new();
 
 		for i in 0..self.items.len() {
@@ -36,7 +36,7 @@ impl Model for InlinePicker {
 			);
 		}
 
-		Text::from(out)
+		Text::from(out).into()
 	}
 }
 
