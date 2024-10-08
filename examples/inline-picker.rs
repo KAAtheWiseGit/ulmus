@@ -1,4 +1,4 @@
-use ulmus::{widget::Text, Cmd, Model, Msg, Program, Reactive};
+use ulmus::{widget::Text, Command, Message, Model, Program, Reactive};
 
 use crossterm::event::{Event, KeyCode};
 
@@ -19,7 +19,7 @@ impl InlinePicker {
 }
 
 impl Model for InlinePicker {
-	fn init(&self) -> Vec<Cmd<Self::CustomMsg>> {
+	fn init(&self) -> Vec<Command> {
 		vec![]
 	}
 
@@ -41,16 +41,11 @@ impl Model for InlinePicker {
 }
 
 impl Reactive for InlinePicker {
-	type CustomMsg = ();
-
-	fn update(
-		&mut self,
-		message: Msg<Self::CustomMsg>,
-	) -> Vec<Cmd<Self::CustomMsg>> {
-		if let Msg::Term(Event::Key(key_event)) = message {
+	fn update(&mut self, message: Message) -> Vec<Command> {
+		if let Some(Event::Key(key_event)) = message.as_ref::<Event>() {
 			match key_event.code {
 				KeyCode::Esc => {
-					return vec![Cmd::Quit];
+					return vec![Command::Quit];
 				}
 				KeyCode::Down => {
 					if self.focus < 2 {
