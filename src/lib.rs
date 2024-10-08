@@ -7,4 +7,4 @@ pub mod widget;
 
 pub use model::Model;
 pub use program::Program;
-pub use reactive::{Cmd, Msg, Reactive, Subroutine, TermCommand};
+pub use reactive::{Command, Message, Reactive, Subroutine, TermCommand};
