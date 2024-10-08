@@ -105,6 +105,7 @@ impl Program {
 		}
 
 		self.deinit_term(&mut stdout)?;
+		drop(stdout);
 
 		Ok(())
 	}
@@ -133,6 +134,10 @@ impl Program {
 		terminal::disable_raw_mode()?;
 		if !self.inline {
 			term.execute(terminal::LeaveAlternateScreen)?;
+		} else {
+			term.execute(terminal::Clear(
+				terminal::ClearType::FromCursorDown,
+			))?;
 		}
 		if self.enable_mouse {
 			term.execute(event::DisableMouseCapture)?;
