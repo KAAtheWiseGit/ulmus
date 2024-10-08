@@ -1,13 +1,13 @@
+mod flexbox;
 mod text;
-// mod flexbox;
 
+pub use flexbox::Flexbox;
 pub use text::Text;
-// pub use flexbox::Flexbox;
 
-use crate::Reactive;
+use crate::{Reactive, View};
 
 /// A trait which describes a composable widget.
-pub trait Widget: Reactive + crossterm::Command {
+pub trait Widget: Reactive + View {
 	/// Sets the display width of the widget to exactly `width`.  If the
 	/// widget is smaller than that, it should pad or stretch.
 	///
