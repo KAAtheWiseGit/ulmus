@@ -1,6 +1,8 @@
 mod text;
+mod flexbox;
 
 pub use text::Text;
+pub use flexbox::Flexbox;
 
 use crate::Reactive;
 
