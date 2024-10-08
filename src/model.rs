@@ -1,4 +1,4 @@
-use crate::{Command, Reactive};
+use crate::{Command, Reactive, View};
 
 /// The `Model` trait describes the behaviour of your TUI.
 pub trait Model: Reactive {
@@ -6,5 +6,5 @@ pub trait Model: Reactive {
 	/// first render.
 	fn init(&self) -> Vec<Command>;
 
-	fn view(&self) -> impl crossterm::Command;
+	fn view(&self) -> View;
 }
