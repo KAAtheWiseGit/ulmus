@@ -19,3 +19,21 @@ impl<T: crossterm::Command> From<T> for View {
 		Self { buffer }
 	}
 }
+
+pub(crate) struct ViewCommand {
+	buffer: String,
+}
+
+impl crossterm::Command for ViewCommand {
+	fn write_ansi(&self, f: &mut impl std::fmt::Write) -> std::fmt::Result {
+		f.write_str(&self.buffer)
+	}
+}
+
+impl View {
+	pub(crate) fn as_command(self) -> ViewCommand {
+		ViewCommand {
+			buffer: self.buffer,
+		}
+	}
+}
