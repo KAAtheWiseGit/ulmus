@@ -7,7 +7,7 @@ use std::{
 };
 
 use crate::reactive::TermCommandImpl;
-use crate::{Cmd, Model, Msg, Subroutine, TermCommand};
+use crate::{Command, Message, Model, Subroutine, TermCommand};
 
 /// A program which runs the [user model][Model].
 #[derive(Clone, Copy)]
@@ -67,19 +67,9 @@ impl Program {
 
 	/// Runs the model.  This function will block until the model returns a
 	/// [`Cmd::Quit`] command.
-	pub fn run<M, T>(&self, model: &mut M) -> Result<()>
-	where
-		M: Model<CustomMsg = T>,
-		T: Send + 'static,
-	{
+	pub fn run<M: Model>(&self, model: &mut M) -> Result<()> {
 		let mut stdout = stdout().lock();
-		let (sender, reciever) = mpsc::channel::<Msg<T>>();
-		#[allow(unused)]
-		let top_row = if self.inline {
-			cursor::position()?.1
-		} else {
-			0
-		};
+		let (sender, reciever) = mpsc::channel::<Message>();
 
 		set_panic_hook(*self);
 		self.init_term(&mut stdout)?;
@@ -93,11 +83,11 @@ impl Program {
 			let iter = commands;
 			for command in iter {
 				match command {
-					Cmd::Term(tc) => {
+					Command::Term(tc) => {
 						queue_tc(&mut stdout, tc)?
 					}
-					Cmd::Quit => break 'event,
-					Cmd::Subroutine(subroutine) => {
+					Command::Quit => break 'event,
+					Command::Subroutine(subroutine) => {
 						run_subroutine(
 							subroutine,
 							sender.clone(),
@@ -162,13 +152,10 @@ fn queue_tc(term: &mut impl Write, tc: TermCommand) -> Result<()> {
 	Ok(())
 }
 
-fn run_subroutine<T>(
-	subroutine: Subroutine<T>,
-	sender: mpsc::Sender<Msg<T>>,
-) -> thread::JoinHandle<()>
-where
-	T: Send + 'static,
-{
+fn run_subroutine(
+	subroutine: Subroutine,
+	sender: mpsc::Sender<Message>,
+) -> thread::JoinHandle<()> {
 	thread::spawn(move || subroutine(sender))
 }
 
@@ -177,13 +164,10 @@ where
 /// # Safety
 ///
 /// Only this subroutine is allowed to call crossterm's `read` or `poll`.
-fn crossterm_subroutine<T>() -> Subroutine<T>
-where
-	T: Send + 'static,
-{
+fn crossterm_subroutine() -> Subroutine {
 	Box::new(move |sender| {
 		while let Ok(event) = event::read() {
-			if sender.send(Msg::Term(event)).is_err() {
+			if sender.send(Message::Term(event)).is_err() {
 				return;
 			}
 		}
