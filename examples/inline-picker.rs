@@ -18,12 +18,8 @@ impl InlinePicker {
 	}
 }
 
-impl Model for InlinePicker {
-	fn init(&self) -> Vec<Command> {
-		vec![]
-	}
-
-	fn view(&self) -> View {
+impl View for InlinePicker {
+	fn view(&self) -> crossterm::style::Print<String> {
 		let mut out = String::new();
 
 		for i in 0..self.items.len() {
@@ -36,7 +32,7 @@ impl Model for InlinePicker {
 			);
 		}
 
-		Text::from(out).into()
+		Text::from(out).view()
 	}
 }
 
@@ -65,6 +61,12 @@ impl Reactive for InlinePicker {
 			}
 		};
 
+		vec![]
+	}
+}
+
+impl Model for InlinePicker {
+	fn init(&self) -> Vec<Command> {
 		vec![]
 	}
 }
