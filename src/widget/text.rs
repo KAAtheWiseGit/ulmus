@@ -6,7 +6,7 @@ use std::{
 };
 
 use super::Widget;
-use crate::{Cmd, Msg, Reactive};
+use crate::{Command, Message, Reactive};
 
 pub struct Text {
 	content: String,
@@ -26,12 +26,7 @@ impl Text {
 }
 
 impl Reactive for Text {
-	type CustomMsg = ();
-
-	fn update(
-		&mut self,
-		_: Msg<Self::CustomMsg>,
-	) -> Vec<Cmd<Self::CustomMsg>> {
+	fn update(&mut self, _: Message) -> Vec<Command> {
 		vec![]
 	}
 }
