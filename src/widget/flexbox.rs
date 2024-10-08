@@ -1,5 +1,5 @@
 use super::Widget;
-use crate::Reactive;
+use crate::{Command, Message, Reactive, View};
 
 pub enum Direction {
 	Row,
@@ -49,12 +49,13 @@ impl Flexbox {
 }
 
 impl Reactive for Flexbox {
-	type CustomMsg = ();
+	fn update(&mut self, _message: Message) -> Vec<Command> {
+		todo!()
+	}
+}
 
-	fn update(
-		&mut self,
-		message: crate::Msg<Self::CustomMsg>,
-	) -> Vec<crate::Cmd<Self::CustomMsg>> {
+impl View for Flexbox {
+	fn view(&self) -> crossterm::style::Print<String> {
 		todo!()
 	}
 }
@@ -78,11 +79,5 @@ impl Widget for Flexbox {
 		self.height.unwrap_or_else(|| {
 			self.widgets.iter().map(|w| w.get_height()).sum()
 		})
-	}
-}
-
-impl crossterm::Command for Flexbox {
-	fn write_ansi(&self, f: &mut impl std::fmt::Write) -> std::fmt::Result {
-		todo!()
 	}
 }
