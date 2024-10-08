@@ -1,5 +1,7 @@
 use std::{any::Any, sync::mpsc};
 
+use crate::View;
+
 pub type Subroutine = Box<dyn FnOnce(mpsc::Sender<Message>) + Send>;
 
 pub struct Message {
@@ -30,14 +32,7 @@ impl Message {
 /// [`update`][Model#tymethod.update] and can be used to change control the
 /// event loop.
 pub enum Command {
-	/// Execute an arbitrary [crossterm command][crossterm::Command].
-	/// Because the latter isn't object-safe, commands must be converted
-	/// into [`TermCommand`] first.
-	///
-	/// The command execution will be queued and flushed with the next
-	/// render.  Note that the commands are queued before the redraw, so
-	/// they can't be used for updating the view contents.
-	Term(TermCommand),
+	Term(View),
 	/// Immediately shuts down the program.
 	Quit,
 	/// Launches a subroutine.  Note that this command can be sent at any
