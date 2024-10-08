@@ -3,6 +3,7 @@
 mod model;
 mod program;
 mod reactive;
+mod view;
 pub mod widget;
 
 pub use model::Model;
