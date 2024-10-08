@@ -15,6 +15,7 @@ pub struct Program {
 	show_cursor: bool,
 	inline: bool,
 	enable_mouse: bool,
+	enable_paste: bool,
 }
 
 impl Default for Program {
@@ -28,6 +29,7 @@ impl Default for Program {
 			show_cursor: false,
 			inline: false,
 			enable_mouse: false,
+			enable_paste: false,
 		}
 	}
 }
@@ -52,6 +54,14 @@ impl Program {
 	/// Enables receiving mouse events in [`update`][Model#tymethod.update].
 	pub fn enable_mouse(mut self) -> Self {
 		self.enable_mouse = true;
+		self
+	}
+
+	/// Enables [bracketed paste mode][bpm].
+	///
+	/// [bpm]: https://en.wikipedia.org/wiki/Bracketed-paste
+	pub fn enable_paste(mut self) -> Self {
+		self.enable_paste = true;
 		self
 	}
 
@@ -122,6 +132,9 @@ impl Program {
 		if self.enable_mouse {
 			term.execute(event::EnableMouseCapture)?;
 		}
+		if self.enable_paste {
+			term.execute(event::EnableBracketedPaste)?;
+		}
 		Ok(())
 	}
 
@@ -135,6 +148,9 @@ impl Program {
 		}
 		if self.enable_mouse {
 			term.execute(event::DisableMouseCapture)?;
+		}
+		if self.enable_paste {
+			term.execute(event::DisableBracketedPaste)?;
 		}
 		Ok(())
 	}
