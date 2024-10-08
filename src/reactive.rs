@@ -5,7 +5,7 @@ use std::{any::Any, sync::mpsc};
 pub type Subroutine = Box<dyn FnOnce(mpsc::Sender<Message>) + Send>;
 
 pub struct Message {
-	value: Box<dyn Any>,
+	value: Box<dyn Any + Send>,
 }
 
 /// Commands are returned by model in [`init`][Model#tymethod.init] and
