@@ -6,7 +6,7 @@ use std::{
 	thread,
 };
 
-use crate::{Command, Message, Model, Subroutine};
+use crate::{view::ViewCommand, Command, Message, Model, Subroutine, View};
 
 /// A program which runs the [user model][Model].
 #[derive(Clone, Copy)]
@@ -83,7 +83,7 @@ impl Program {
 			for command in iter {
 				match command {
 					Command::Term(tc) => {
-						queue_tc(&mut stdout, tc)?
+						queue_view(&mut stdout, tc)?
 					}
 					Command::Quit => break 'event,
 					Command::Subroutine(subroutine) => {
@@ -95,8 +95,7 @@ impl Program {
 				}
 			}
 
-			let cmd = model.view();
-			stdout.queue(cmd)?;
+			queue_view(&mut stdout, model.view())?;
 			stdout.flush()?;
 
 			let Ok(message) = reciever.recv() else {
@@ -145,9 +144,9 @@ impl Program {
 	}
 }
 
-fn queue_tc(term: &mut impl Write, tc: TermCommand) -> Result<()> {
-	let tc: TermCommandImpl = tc.into();
-	term.queue(tc)?;
+fn queue_view(term: &mut impl Write, view: View) -> Result<()> {
+	let vc = view.to_command();
+	term.queue(vc)?;
 	Ok(())
 }
 
