@@ -14,7 +14,7 @@ method.
 model's [`update` method][update].  After each update the [`view`]
 method will be called, and the results will be draw on the terminal.
 
-For performing I/O see [`Cmd`] and [`Subroutine`].
+For performing I/O see [`Command`] and [`Subroutine`].
 
 
 ## [Examples]
@@ -28,13 +28,8 @@ For performing I/O see [`Cmd`] and [`Subroutine`].
 ### Bubble Tea
 
 Ulmus interface is based on that of Bubble Tea, so they are very
-similar.  However, Rust's type system causes two differences:
-
-- Ulmus doesn't type-erase messages, so the application must implement a
-  separate type for its subroutines: [`CustomMsg`].
-
-- The model is mutated in-place in `update`, since it can be ensured
-  that it doesn't change when `view` is called.
+similar.  The model is mutated in-place in `update`, since it can be
+ensured that it doesn't change when `view` is called.
 
 
 ### [Ratatui]
@@ -60,12 +55,10 @@ Ulmus is my small weekend project.
 [`run`]: https://docs.rs/ulmus/latest/ulmus/struct.Program.html#method.run
 [update]: https://docs.rs/ulmus/latest/ulmus/trait.Model.html#tymethod.update
 [`view`]: https://docs.rs/ulmus/latest/ulmus/trait.Model.html#tymethod.view
-[`Cmd`]: https://docs.rs/ulmus/latest/ulmus/enum.Cmd.html
+[`Command`]: https://docs.rs/ulmus/latest/ulmus/enum.Command.html
 [`Subroutine`]: https://docs.rs/ulmus/latest/ulmus/type.Subroutine.html
-[`CustomMsg`]: https://docs.rs/ulmus/latest/ulmus/trait.Model.html#associatedtype.CustomMsg
 [Examples]: https://codeberg.org/kaathewise/ulmus/src/branch/trunk/examples
 [examples-ip]: https://codeberg.org/kaathewise/ulmus/src/branch/trunk/examples/inline-picker.rs
-[examples-pm]: https://codeberg.org/kaathewise/ulmus/src/branch/trunk/examples/prefix-matcher.rs
 [Ratatui]: https://ratatui.rs/
 [`colored`]: https://github.com/colored-rs/colored
 [re]: https://ratatui.rs/showcase/third-party-widgets/
