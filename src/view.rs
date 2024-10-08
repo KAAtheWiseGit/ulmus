@@ -1,3 +1,5 @@
+use crossterm::style::Print;
+
 #[derive(Default, Clone)]
 pub struct View {
 	buffer: String,
@@ -13,20 +15,12 @@ impl<T: crossterm::Command> From<T> for View {
 	}
 }
 
-pub(crate) struct ViewCommand {
-	buffer: String,
-}
-
-impl crossterm::Command for ViewCommand {
-	fn write_ansi(&self, f: &mut impl std::fmt::Write) -> std::fmt::Result {
-		f.write_str(&self.buffer)
-	}
-}
-
 impl View {
-	pub(crate) fn into_command(self) -> ViewCommand {
-		ViewCommand {
-			buffer: self.buffer,
-		}
+	pub(crate) fn into_command(self) -> Print<String> {
+		Print(self.buffer)
+	}
+
+	pub(crate) fn as_command(&self) -> Print<&str> {
+		Print(&self.buffer)
 	}
 }
