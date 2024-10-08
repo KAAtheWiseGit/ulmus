@@ -1,4 +1,4 @@
-use crossterm::cursor;
+use crossterm::{cursor, style::Print, Command as _};
 
 use std::{
 	cmp::Ordering,
@@ -6,7 +6,7 @@ use std::{
 };
 
 use super::Widget;
-use crate::{Command, Message, Reactive};
+use crate::{Command, Message, Reactive, View};
 
 pub struct Text {
 	content: String,
@@ -61,23 +61,25 @@ impl Widget for Text {
 	}
 }
 
-impl crossterm::Command for Text {
-	fn write_ansi(&self, f: &mut impl Write) -> Result {
+impl View for Text {
+	#[allow(unused_must_use)]
+	fn view(&self) -> Print<String> {
+		let mut out = String::new();
 		for (i, line) in self.content.lines().enumerate() {
 			if self.height.is_some_and(|height| height == i) {
 				break;
 			}
 
-			cursor::SavePosition.write_ansi(f)?;
+			cursor::SavePosition.write_ansi(&mut out);
 			if i > 0 {
-				cursor::MoveDown(i as u16).write_ansi(f)?;
+				cursor::MoveDown(i as u16).write_ansi(&mut out);
 			}
 
-			fit_write_str(line, self.get_width(), f)?;
-			cursor::RestorePosition.write_ansi(f)?;
+			fit_write_str(line, self.get_width(), &mut out);
+			cursor::RestorePosition.write_ansi(&mut out);
 		}
 
-		Ok(())
+		Print(out)
 	}
 }
 
