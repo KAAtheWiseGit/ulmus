@@ -1,5 +1,3 @@
-use crossterm::{event::Event as CrosstermEvent, Command as CrosstermCommand};
-
 use std::{any::Any, sync::mpsc};
 
 pub type Subroutine = Box<dyn FnOnce(mpsc::Sender<Message>) + Send>;
@@ -64,7 +62,7 @@ pub struct TermCommand(String);
 /// library.
 pub struct TermCommandImpl(String);
 
-impl<T: CrosstermCommand> From<T> for TermCommand {
+impl<T: crossterm::Command> From<T> for TermCommand {
 	fn from(value: T) -> Self {
 		let mut buffer = String::new();
 		if value.write_ansi(&mut buffer).is_err() {
@@ -80,7 +78,7 @@ impl From<TermCommand> for TermCommandImpl {
 	}
 }
 
-impl CrosstermCommand for TermCommandImpl {
+impl crossterm::Command for TermCommandImpl {
 	fn write_ansi(&self, f: &mut impl std::fmt::Write) -> std::fmt::Result {
 		f.write_str(&self.0)
 	}
