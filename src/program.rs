@@ -167,7 +167,7 @@ fn run_subroutine(
 fn crossterm_subroutine() -> Subroutine {
 	Box::new(move |sender| {
 		while let Ok(event) = event::read() {
-			if sender.send(Message::Term(event)).is_err() {
+			if sender.send(Message::new(event)).is_err() {
 				return;
 			}
 		}
