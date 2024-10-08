@@ -1,4 +1,4 @@
-struct View {
+pub struct View {
 	buffer: String,
 }
 
