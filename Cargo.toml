@@ -5,7 +5,7 @@ edition = "2021"
 license = "MPL-2.0"
 authors = ["Andrej Kolčin <self@kaathewise.net>"]
 description = "An Elm architecture TUI framework"
-keywords = ["tui", "user-interface", "elm"]
+keywords = ["tui", "user-interface", "elm", "widgets"]
 categories = ["command-line-interface"]
 repository = "https://codeberg.org/kaathewise/ulmus"
 
