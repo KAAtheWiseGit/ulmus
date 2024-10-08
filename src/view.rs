@@ -1,13 +1,6 @@
+#[derive(Default, Clone)]
 pub struct View {
 	buffer: String,
-}
-
-impl View {
-	pub fn new() -> Self {
-		Self {
-			buffer: String::new(),
-		}
-	}
 }
 
 impl<T: crossterm::Command> From<T> for View {
@@ -31,7 +24,7 @@ impl crossterm::Command for ViewCommand {
 }
 
 impl View {
-	pub(crate) fn to_command(self) -> ViewCommand {
+	pub(crate) fn into_command(self) -> ViewCommand {
 		ViewCommand {
 			buffer: self.buffer,
 		}

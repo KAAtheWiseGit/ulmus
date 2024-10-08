@@ -6,7 +6,7 @@ use std::{
 	thread,
 };
 
-use crate::{view::ViewCommand, Command, Message, Model, Subroutine, View};
+use crate::{Command, Message, Model, Subroutine, View};
 
 /// A program which runs the [user model][Model].
 #[derive(Clone, Copy)]
@@ -145,7 +145,7 @@ impl Program {
 }
 
 fn queue_view(term: &mut impl Write, view: View) -> Result<()> {
-	let vc = view.to_command();
+	let vc = view.into_command();
 	term.queue(vc)?;
 	Ok(())
 }
