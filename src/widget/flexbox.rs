@@ -25,10 +25,9 @@ impl Flexbox {
 	pub fn new(
 		direction: Direction,
 		widgets: Vec<Box<dyn Widget>>,
-		sizes: Vec<Size>,
+		mut sizes: Vec<Size>,
 	) -> Box<Flexbox> {
-		// TODO automatically truncate/extend `sizes`
-		assert_eq!(widgets.len(), sizes.len());
+		sizes.resize(widgets.len(), Size::Auto);
 
 		Box::new(Flexbox {
 			widgets,
