@@ -41,8 +41,7 @@ impl Default for Program {
 }
 
 impl Program {
-	/// Don't hide the cursor.  If enabled, it becomes the
-	/// [model's][Model]
+	/// Don't hide the cursor.  If enabled, it becomes the [model's][Model]
 	/// responsibility to set the cursor position.
 	pub fn show_cursor(mut self) -> Self {
 		self.show_cursor = true;
@@ -72,7 +71,7 @@ impl Program {
 	}
 
 	/// Runs the model.  This function will block until the model returns a
-	/// [`Cmd::Quit`] command.
+	/// [`Command::Quit`] command.
 	pub fn run<M: Model>(&self, model: &mut M) -> Result<()> {
 		let mut stdout = stdout().lock();
 		let (sender, reciever) = mpsc::channel::<Message>();

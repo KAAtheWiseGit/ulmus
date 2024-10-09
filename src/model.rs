@@ -32,9 +32,6 @@ impl Message {
 	}
 }
 
-/// Commands are returned by model in [`init`][Model#tymethod.init] and
-/// [`update`][Model#tymethod.update] and can be used to change control the
-/// event loop.
 pub enum Command {
 	SetCursor(u16, u16),
 	/// Immediately shuts down the program.
@@ -45,10 +42,7 @@ pub enum Command {
 	Subroutine(Subroutine),
 }
 
-/// The `Model` trait describes the behaviour of your TUI.
 pub trait Model {
-	/// Returns [commands][`Cmd`] which will be ran on startup, before the
-	/// first render.
 	fn init(&self) -> Vec<Command>;
 
 	fn update(&mut self, message: Message) -> Vec<Command>;
