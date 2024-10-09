@@ -1,9 +1,6 @@
 use crossterm::{cursor, event::MouseEvent, Command as _};
 
-use std::{
-	cmp::Ordering,
-	fmt::{Result, Write},
-};
+use std::fmt::Write;
 
 use super::Widget;
 use crate::{Area, Message};
