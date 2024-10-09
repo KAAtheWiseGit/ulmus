@@ -50,6 +50,9 @@ impl View for Text {
 
 		for line in self.content.lines().take(area.height) {
 			fit_write_str(line, area.width, &mut out);
+
+			cursor::MoveToColumn(area.x as u16)
+				.write_ansi(&mut out);
 			cursor::MoveDown(1).write_ansi(&mut out);
 		}
 
