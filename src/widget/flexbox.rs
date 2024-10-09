@@ -76,12 +76,11 @@ impl Flexbox {
 		for (i, s) in self.sizes.iter().enumerate() {
 			if let Size::Auto = s {
 				let hint_length = match self.direction {
-					Direction::Vertical => {
+					Direction::Vertical => self.widgets[i]
+						.get_height_hint(),
+					Direction::Horizontal => {
 						self.widgets[i].get_width_hint()
 					}
-					Direction::Horizontal => self.widgets
-						[i]
-						.get_height_hint(),
 				};
 
 				cut!(i, hint_length);
@@ -89,6 +88,35 @@ impl Flexbox {
 		}
 
 		// TODO: fractions
+
+		out
+	}
+
+	fn split(&self, area: Area) -> Vec<Area> {
+		let lengths = match self.direction {
+			Direction::Vertical => self.layout(area.height),
+			Direction::Horizontal => self.layout(area.width),
+		};
+		let mut out = vec![];
+		let mut offset = 0;
+
+		for length in lengths {
+			let curr_area = match self.direction {
+				Direction::Vertical => Area {
+					y: area.y + offset,
+					height: length,
+					..area
+				},
+				Direction::Horizontal => Area {
+					x: area.x + offset,
+					width: length,
+					..area
+				},
+			};
+			out.push(curr_area);
+
+			offset += length;
+		}
 
 		out
 	}
@@ -104,10 +132,24 @@ impl Widget for Flexbox {
 	}
 
 	fn render(&self, area: Area) -> String {
-		todo!()
+		let mut out = String::new();
+
+		for (area, widget) in self.split(area).iter().zip(&self.widgets)
+		{
+			out += &widget.render(*area);
+		}
+
+		out
 	}
 
 	fn on_click(&self, area: Area, event: MouseEvent) -> Message {
-		todo!()
+		for (area, widget) in self.split(area).iter().zip(&self.widgets)
+		{
+			if area.contains(event) {
+				return widget.on_click(*area, event);
+			}
+		}
+
+		Message::empty()
 	}
 }
