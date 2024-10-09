@@ -15,6 +15,10 @@ impl Message {
 		}
 	}
 
+	pub fn empty() -> Self {
+		Self::new(())
+	}
+
 	pub fn as_ref<T: 'static + Send>(&self) -> Option<&T> {
 		self.value.downcast_ref()
 	}
