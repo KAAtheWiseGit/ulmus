@@ -6,7 +6,7 @@ use std::{
 };
 
 use super::Widget;
-use crate::{Area, Message, View};
+use crate::{Area, Message};
 
 pub struct Text {
 	content: String,
@@ -48,18 +48,8 @@ impl Widget for Text {
 		self.content.lines().count()
 	}
 
-	fn on_click(&self, event: MouseEvent) -> Message {
-		let Some(ref on_click) = self.on_click else {
-			return Message::new(());
-		};
-
-		on_click(event)
-	}
-}
-
-impl View for Text {
 	#[allow(unused_must_use)]
-	fn view(&self, area: Area) -> String {
+	fn render(&self, area: Area) -> String {
 		let mut out = String::new();
 		// XXX: methods on area
 		cursor::MoveTo(area.x as u16, area.y as u16)
@@ -74,6 +64,14 @@ impl View for Text {
 		}
 
 		out
+	}
+
+	fn on_click(&self, event: MouseEvent) -> Message {
+		let Some(ref on_click) = self.on_click else {
+			return Message::new(());
+		};
+
+		on_click(event)
 	}
 }
 

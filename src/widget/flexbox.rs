@@ -1,5 +1,5 @@
 use super::Widget;
-use crate::{Area, Command, Message, View};
+use crate::{Area, Message};
 
 pub enum Direction {
 	Vertical,
@@ -49,12 +49,6 @@ impl Flexbox {
 	}
 }
 
-impl View for Flexbox {
-	fn view(&self, _area: Area) -> String {
-		todo!()
-	}
-}
-
 impl Widget for Flexbox {
 	fn get_width_hint(&self) -> usize {
 		self.widgets.iter().map(|w| w.get_width_hint()).sum()
@@ -62,6 +56,10 @@ impl Widget for Flexbox {
 
 	fn get_height_hint(&self) -> usize {
 		self.widgets.iter().map(|w| w.get_height_hint()).sum()
+	}
+
+	fn render(&self, area: Area) -> String {
+		todo!()
 	}
 
 	fn on_click(&self, event: crossterm::event::MouseEvent) -> Message {
