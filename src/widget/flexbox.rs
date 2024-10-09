@@ -51,7 +51,7 @@ impl Flexbox {
 		Flexbox::new(Direction::Horizontal, widgets, sizes)
 	}
 
-	fn layout(&self, direction: Direction, length: u16) -> Vec<u16> {
+	fn layout(&self, length: u16) -> Vec<u16> {
 		let mut out = vec![0; self.widgets.len()];
 		let mut total_length = length;
 
@@ -75,7 +75,7 @@ impl Flexbox {
 
 		for (i, s) in self.sizes.iter().enumerate() {
 			if let Size::Auto = s {
-				let hint_length = match direction {
+				let hint_length = match self.direction {
 					Direction::Vertical => {
 						self.widgets[i].get_width_hint()
 					}
