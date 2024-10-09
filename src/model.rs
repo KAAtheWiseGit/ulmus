@@ -1,6 +1,6 @@
 use std::{any::Any, sync::mpsc};
 
-use crate::View;
+use crate::widget::Widget;
 
 pub type Subroutine = Box<dyn FnOnce(mpsc::Sender<Message>) + Send>;
 
@@ -41,10 +41,12 @@ pub enum Command {
 }
 
 /// The `Model` trait describes the behaviour of your TUI.
-pub trait Model: View {
+pub trait Model {
 	/// Returns [commands][`Cmd`] which will be ran on startup, before the
 	/// first render.
 	fn init(&self) -> Vec<Command>;
 
 	fn update(&mut self, message: Message) -> Vec<Command>;
+
+	fn view(&self) -> Box<dyn Widget>;
 }
