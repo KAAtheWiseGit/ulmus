@@ -6,15 +6,15 @@ use std::{
 };
 
 use super::Widget;
-use crate::{Area, Command, Message, View};
+use crate::{Area, View};
 
 pub struct Text {
 	content: String,
 }
 
 impl Text {
-	pub fn from(content: String) -> Self {
-		Self { content }
+	pub fn new(content: String) -> Box<Text> {
+		Box::new(Text { content })
 	}
 }
 
