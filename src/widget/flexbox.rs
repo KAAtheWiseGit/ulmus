@@ -8,17 +8,10 @@ pub enum Direction {
 	Column,
 }
 
-/// Describes how the available space will be allocated between widgets.  `Auto`
-/// has the highest priority, then goes `Length`, and, finally, `Fraction`.
 pub enum Size {
-	/// As much size as the widget requests.
-	Auto,
-	/// A proportion of the space remaining after the `Length` and `Auto`
-	/// sizes have been allocated.  For example, if two widgets request
-	/// `Fraction(2)`, each will get half of the remaning space.
-	Fraction(usize),
-	/// Literal length in cells.
 	Length(usize),
+	Auto,
+	Fraction(usize),
 }
 
 pub struct Flexbox {
