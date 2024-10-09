@@ -1,4 +1,4 @@
-use crossterm::{cursor, Command as _};
+use crossterm::{cursor, event::MouseEvent, Command as _};
 
 use std::{
 	cmp::Ordering,
@@ -10,11 +10,26 @@ use crate::{Area, Message, View};
 
 pub struct Text {
 	content: String,
+
+	on_click: Option<Box<dyn Fn(MouseEvent) -> Message>>,
 }
 
 impl Text {
 	pub fn new(content: String) -> Box<Text> {
-		Box::new(Text { content })
+		Box::new(Text {
+			content,
+			on_click: None,
+		})
+	}
+
+	pub fn new_with<F>(content: String, on_click: F) -> Box<Text>
+	where
+		F: Fn(MouseEvent) -> Message + 'static,
+	{
+		Box::new(Text {
+			content,
+			on_click: Some(Box::new(on_click)),
+		})
 	}
 }
 
@@ -33,8 +48,12 @@ impl Widget for Text {
 		self.content.lines().count()
 	}
 
-	fn on_click(&self, event: crossterm::event::MouseEvent) -> Message {
-		todo!()
+	fn on_click(&self, event: MouseEvent) -> Message {
+		let Some(ref on_click) = self.on_click else {
+			return Message::new(());
+		};
+
+		on_click(event)
 	}
 }
 
