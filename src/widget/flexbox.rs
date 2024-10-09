@@ -1,5 +1,5 @@
 use super::Widget;
-use crate::{Area, Command, Message, Reactive, View};
+use crate::{Area, Command, Message, View};
 
 pub enum Direction {
 	Vertical,
@@ -46,12 +46,6 @@ impl Flexbox {
 		sizes: Vec<Size>,
 	) -> Box<Flexbox> {
 		Flexbox::new(Direction::Horizontal, widgets, sizes)
-	}
-}
-
-impl Reactive for Flexbox {
-	fn update(&mut self, _message: Message) -> Vec<Command> {
-		todo!()
 	}
 }
 

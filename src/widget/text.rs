@@ -6,7 +6,7 @@ use std::{
 };
 
 use super::Widget;
-use crate::{Area, Command, Message, Reactive, View};
+use crate::{Area, Command, Message, View};
 
 pub struct Text {
 	content: String,
@@ -15,12 +15,6 @@ pub struct Text {
 impl Text {
 	pub fn from(content: String) -> Self {
 		Self { content }
-	}
-}
-
-impl Reactive for Text {
-	fn update(&mut self, _: Message) -> Vec<Command> {
-		vec![]
 	}
 }
 
