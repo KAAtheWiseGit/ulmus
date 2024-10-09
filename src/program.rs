@@ -1,5 +1,7 @@
 use crossterm::{
-	cursor, event, queue,
+	cursor,
+	event::{self, Event},
+	queue,
 	style::Print,
 	terminal::{self, ClearType},
 	ExecutableCommand,
@@ -106,12 +108,12 @@ impl Program {
 			let Ok(message) = reciever.recv() else {
 				break;
 			};
-			if let Some(event) = message.as_ref::<event::Event>() {
-				if let event::Event::Mouse(event) = event {
-					let msg = widget.on_click(area, *event);
-					commands = model.update(msg);
-					continue;
-				}
+			if let Some(Event::Mouse(event)) =
+				message.as_ref::<Event>()
+			{
+				let msg = widget.on_click(area, *event);
+				commands = model.update(msg);
+				continue;
 			};
 
 			commands = model.update(message);
