@@ -82,9 +82,6 @@ impl Program {
 			let iter = commands;
 			for command in iter {
 				match command {
-					Command::Term(print) => {
-						stdout.queue(print)?;
-					}
 					Command::Quit => break 'event,
 					Command::Subroutine(subroutine) => {
 						run_subroutine(
