@@ -2,6 +2,7 @@ pub trait View {
 	fn view(&self, area: Area) -> String;
 }
 
+#[derive(Copy, Clone)]
 pub struct Area {
 	pub x: usize,
 	pub y: usize,

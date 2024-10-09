@@ -9,7 +9,7 @@ use std::{
 	thread,
 };
 
-use crate::{Command, Message, Model, Subroutine};
+use crate::{Area, Command, Message, Model, Subroutine};
 
 /// A program which runs the [user model][Model].
 #[derive(Clone, Copy)]
@@ -72,6 +72,8 @@ impl Program {
 	pub fn run<M: Model>(&self, model: &mut M) -> Result<()> {
 		let mut stdout = stdout().lock();
 		let (sender, reciever) = mpsc::channel::<Message>();
+		// TODO resizing
+		let area = get_area()?;
 
 		set_panic_hook(*self);
 		self.init_term(&mut stdout)?;
@@ -95,7 +97,7 @@ impl Program {
 				}
 			}
 
-			stdout.queue(Print(model.view()))?;
+			stdout.queue(Print(model.view(area)))?;
 			stdout.flush()?;
 
 			let Ok(message) = reciever.recv() else {
@@ -179,4 +181,16 @@ fn set_panic_hook(program: Program) {
 		};
 		old_hook(info);
 	}))
+}
+
+fn get_area() -> Result<Area> {
+	let size = terminal::size()?;
+	let cursor = cursor::position()?;
+
+	Ok(Area {
+		x: cursor.0.into(),
+		y: cursor.1.into(),
+		width: (size.0 - cursor.0).into(),
+		height: (size.1 - cursor.1).into(),
+	})
 }
