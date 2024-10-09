@@ -6,12 +6,14 @@ mod text;
 pub use flexbox::Flexbox;
 pub use text::Text;
 
-use crate::{Message, View};
+use crate::{Area, Message};
 
-pub trait Widget: View {
+pub trait Widget {
 	fn get_width_hint(&self) -> usize;
 
 	fn get_height_hint(&self) -> usize;
+
+	fn render(&self, area: Area) -> String;
 
 	fn on_click(&self, event: MouseEvent) -> Message;
 }
