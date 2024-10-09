@@ -63,4 +63,8 @@ impl Widget for Flexbox {
 	fn get_height_hint(&self) -> usize {
 		self.widgets.iter().map(|w| w.get_height_hint()).sum()
 	}
+
+	fn on_click(&self, event: crossterm::event::MouseEvent) -> Message {
+		todo!()
+	}
 }

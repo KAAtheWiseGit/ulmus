@@ -6,7 +6,7 @@ use std::{
 };
 
 use super::Widget;
-use crate::{Area, View};
+use crate::{Area, Message, View};
 
 pub struct Text {
 	content: String,
@@ -31,6 +31,10 @@ impl Widget for Text {
 
 	fn get_height_hint(&self) -> usize {
 		self.content.lines().count()
+	}
+
+	fn on_click(&self, event: crossterm::event::MouseEvent) -> Message {
+		todo!()
 	}
 }
 
