@@ -104,6 +104,14 @@ impl Program {
 			let Ok(message) = reciever.recv() else {
 				break;
 			};
+			if let Some(event) = message.as_ref::<event::Event>() {
+				if let event::Event::Mouse(event) = event {
+					let msg = widget.on_click(area, *event);
+					commands = model.update(msg);
+					continue;
+				}
+			};
+
 			commands = model.update(message);
 		}
 
