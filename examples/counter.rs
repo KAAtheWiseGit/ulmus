@@ -21,7 +21,7 @@ enum Action {
 }
 
 fn button(title: &str, action: Action) -> Box<Text> {
-	Text::new_with(title.to_owned(), move |message| {
+	Text::new(title).on_mouse(move |message| {
 		if matches!(message.kind, MouseEventKind::Down(_)) {
 			Message::new(action)
 		} else {

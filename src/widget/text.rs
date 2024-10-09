@@ -8,25 +8,26 @@ use crate::{Area, Message};
 pub struct Text {
 	content: String,
 
-	on_click: Option<Box<dyn Fn(MouseEvent) -> Message>>,
+	on_mouse: Option<Box<dyn Fn(MouseEvent) -> Message>>,
 }
 
 impl Text {
-	pub fn new(content: String) -> Box<Text> {
+	pub fn new<S>(content: S) -> Box<Text>
+	where
+		S: AsRef<str>,
+	{
 		Box::new(Text {
-			content,
-			on_click: None,
+			content: content.as_ref().to_owned(),
+			on_mouse: None,
 		})
 	}
 
-	pub fn new_with<F>(content: String, on_click: F) -> Box<Text>
+	pub fn on_mouse<F>(mut self: Box<Text>, handler: F) -> Box<Text>
 	where
 		F: Fn(MouseEvent) -> Message + 'static,
 	{
-		Box::new(Text {
-			content,
-			on_click: Some(Box::new(on_click)),
-		})
+		self.on_mouse = Some(Box::new(handler));
+		self
 	}
 }
 
@@ -72,7 +73,7 @@ impl Widget for Text {
 			return Message::empty();
 		}
 
-		let Some(ref on_click) = self.on_click else {
+		let Some(ref on_click) = self.on_mouse else {
 			return Message::empty();
 		};
 
