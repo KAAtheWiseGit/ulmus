@@ -1,4 +1,4 @@
-use crossterm::event::{Event, KeyCode};
+use crossterm::event::{Event, KeyCode, MouseEventKind};
 use ulmus::{
 	widget::{Flexbox, Size, Text, Widget},
 	Command, Message, Model, Program,
@@ -12,6 +12,22 @@ impl Counter {
 	fn new(count: i64) -> Counter {
 		Counter { count }
 	}
+}
+
+#[derive(Clone, Copy)]
+enum Action {
+	Increment,
+	Decrement,
+}
+
+fn button(title: &str, action: Action) -> Box<Text> {
+	Text::new_with(title.to_owned(), move |message| {
+		if matches!(message.kind, MouseEventKind::Down(_)) {
+			Message::new(action)
+		} else {
+			Message::empty()
+		}
+	})
 }
 
 impl Model for Counter {
@@ -43,8 +59,23 @@ impl Model for Counter {
 
 	fn view(&self) -> Box<dyn Widget> {
 		Flexbox::vertical(
-			vec![Text::new(self.count.to_string())],
-			vec![Size::Auto],
+			vec![
+				Text::new(self.count.to_string()),
+				Flexbox::horizontal(
+					vec![
+						button(
+							"Increment",
+							Action::Increment,
+						),
+						button(
+							"Decrement",
+							Action::Decrement,
+						),
+					],
+					vec![Size::Auto, Size::Auto],
+				),
+			],
+			vec![Size::Auto, Size::Auto],
 		)
 	}
 }
