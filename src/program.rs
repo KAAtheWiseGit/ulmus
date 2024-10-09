@@ -73,7 +73,7 @@ impl Program {
 		let mut stdout = stdout().lock();
 		let (sender, reciever) = mpsc::channel::<Message>();
 		// TODO resizing
-		let area = get_area()?;
+		let area = self.get_area()?;
 
 		set_panic_hook(*self);
 		self.init_term(&mut stdout)?;
@@ -150,6 +150,22 @@ impl Program {
 		}
 		Ok(())
 	}
+
+	fn get_area(&self) -> Result<Area> {
+		let size = terminal::size()?;
+		let cursor = if self.inline {
+			cursor::position()?
+		} else {
+			(0, 0)
+		};
+
+		Ok(Area {
+			x: cursor.0,
+			y: cursor.1,
+			width: size.0 - cursor.0,
+			height: size.1 - cursor.1,
+		})
+	}
 }
 
 fn run_subroutine(
@@ -182,16 +198,4 @@ fn set_panic_hook(program: Program) {
 		};
 		old_hook(info);
 	}))
-}
-
-fn get_area() -> Result<Area> {
-	let size = terminal::size()?;
-	let cursor = cursor::position()?;
-
-	Ok(Area {
-		x: cursor.0,
-		y: cursor.1,
-		width: size.0 - cursor.0,
-		height: size.1 - cursor.1,
-	})
 }
