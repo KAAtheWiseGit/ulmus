@@ -65,7 +65,10 @@ impl Widget for Text {
 	}
 
 	fn on_click(&self, area: Area, event: MouseEvent) -> Message {
-		// TODO: check that the event is inside the area
+		if !area.contains(event) {
+			return Message::empty();
+		}
+
 		let Some(ref on_click) = self.on_click else {
 			return Message::empty();
 		};
