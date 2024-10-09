@@ -1,6 +1,8 @@
 use crossterm::{
-	cursor, event, style::Print, terminal, ExecutableCommand,
-	QueueableCommand,
+	cursor, event, queue,
+	style::Print,
+	terminal::{self, ClearType},
+	ExecutableCommand,
 };
 
 use std::{
@@ -97,8 +99,8 @@ impl Program {
 			}
 
 			let widget = model.view();
-			let cmd = widget.render(area);
-			stdout.queue(Print(cmd))?;
+			let command = widget.render(area);
+			self.draw(&mut stdout, area, command)?;
 			stdout.flush()?;
 
 			let Ok(message) = reciever.recv() else {
@@ -147,7 +149,7 @@ impl Program {
 			term.execute(terminal::LeaveAlternateScreen)?;
 		} else {
 			term.execute(terminal::Clear(
-				terminal::ClearType::FromCursorDown,
+				ClearType::FromCursorDown,
 			))?;
 		}
 		if self.enable_mouse {
@@ -173,6 +175,23 @@ impl Program {
 			width: size.0 - cursor.0,
 			height: size.1 - cursor.1,
 		})
+	}
+
+	fn draw(
+		&self,
+		stdout: &mut impl Write,
+		area: Area,
+		command: String,
+	) -> Result<()> {
+		queue!(
+			stdout,
+			cursor::SavePosition,
+			cursor::MoveTo(area.x, area.y),
+			terminal::Clear(ClearType::FromCursorDown),
+			cursor::RestorePosition,
+			Print(command),
+		)?;
+		Ok(())
 	}
 }
 
