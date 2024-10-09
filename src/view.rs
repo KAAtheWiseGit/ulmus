@@ -1,5 +1,5 @@
 pub trait View {
-	fn view(&self) -> String;
+	fn view(&self, area: Area) -> String;
 }
 
 pub struct Area {

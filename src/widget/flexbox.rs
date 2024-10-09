@@ -1,5 +1,5 @@
 use super::Widget;
-use crate::{Command, Message, Reactive, View};
+use crate::{Area, Command, Message, Reactive, View};
 
 pub enum Direction {
 	Row,
@@ -43,7 +43,7 @@ impl Reactive for Flexbox {
 }
 
 impl View for Flexbox {
-	fn view(&self) -> String {
+	fn view(&self, _area: Area) -> String {
 		todo!()
 	}
 }

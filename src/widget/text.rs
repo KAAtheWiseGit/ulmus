@@ -6,7 +6,7 @@ use std::{
 };
 
 use super::Widget;
-use crate::{Command, Message, Reactive, View};
+use crate::{Area, Command, Message, Reactive, View};
 
 pub struct Text {
 	content: String,
@@ -42,7 +42,7 @@ impl Widget for Text {
 
 impl View for Text {
 	#[allow(unused_must_use)]
-	fn view(&self) -> String {
+	fn view(&self, area: Area) -> String {
 		let mut out = String::new();
 		for (i, line) in self.content.lines().enumerate() {
 			cursor::SavePosition.write_ansi(&mut out);
