@@ -142,11 +142,11 @@ impl Widget for Flexbox {
 		out
 	}
 
-	fn on_click(&self, area: Area, event: MouseEvent) -> Message {
+	fn process_mouse(&self, event: MouseEvent, area: Area) -> Message {
 		for (area, widget) in self.split(area).iter().zip(&self.widgets)
 		{
 			if area.contains(event) {
-				return widget.on_click(*area, event);
+				return widget.process_mouse(event, *area);
 			}
 		}
 

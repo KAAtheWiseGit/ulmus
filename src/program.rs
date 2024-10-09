@@ -116,7 +116,7 @@ impl Program {
 			if let Some(Event::Mouse(event)) =
 				message.as_ref::<Event>()
 			{
-				let msg = widget.on_click(area, *event);
+				let msg = widget.process_mouse(*event, area);
 				commands = model.update(msg);
 				continue;
 			};

@@ -15,5 +15,5 @@ pub trait Widget {
 
 	fn render(&self, area: Area) -> String;
 
-	fn on_click(&self, area: Area, event: MouseEvent) -> Message;
+	fn process_mouse(&self, event: MouseEvent, area: Area) -> Message;
 }

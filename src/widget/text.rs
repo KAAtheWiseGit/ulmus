@@ -67,7 +67,7 @@ impl Widget for Text {
 		out
 	}
 
-	fn on_click(&self, area: Area, event: MouseEvent) -> Message {
+	fn process_mouse(&self, event: MouseEvent, area: Area) -> Message {
 		if !area.contains(event) {
 			return Message::empty();
 		}
