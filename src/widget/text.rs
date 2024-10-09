@@ -55,7 +55,13 @@ impl Widget for Text {
 		cursor::MoveTo(area.x, area.y).write_ansi(&mut out);
 
 		for line in self.content.lines().take(area.height as usize) {
-			fit_write_str(line, area.width, &mut out);
+			// TODO: truncate lines
+			// This is a tough one.  The length of a line can be
+			// approximated by stripping ANSI codes and using
+			// `unicode-width`.  Truncating is harder, as those two
+			// stages have to be combined.  I'll probably have to
+			// write a custom parser using `vte`.
+			out.write_str(line);
 
 			cursor::MoveToColumn(area.x).write_ansi(&mut out);
 			cursor::MoveDown(1).write_ansi(&mut out);
@@ -75,29 +81,4 @@ impl Widget for Text {
 
 		on_click(event)
 	}
-}
-
-fn fit_write_str(s: &str, len: u16, f: &mut impl Write) -> Result {
-	let len = len as usize;
-	let s_len = s.chars().count();
-
-	match s_len.cmp(&len) {
-		Ordering::Less => {
-			f.write_str(s)?;
-			f.write_str(&" ".repeat(len - s_len))?;
-		}
-		Ordering::Greater => {
-			for (i, ch) in s.chars().enumerate() {
-				if i == len {
-					break;
-				}
-				f.write_char(ch)?;
-			}
-		}
-		Ordering::Equal => {
-			f.write_str(s)?;
-		}
-	}
-
-	Ok(())
 }
