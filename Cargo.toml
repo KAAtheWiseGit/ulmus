@@ -12,9 +12,6 @@ repository = "https://codeberg.org/kaathewise/ulmus"
 [dependencies]
 crossterm = "0.28.1"
 
-[dev-dependencies]
-walkdir = "2.5.0"
-
 [lints.clippy]
 panic = "forbid"
 expect_used = "forbid"
