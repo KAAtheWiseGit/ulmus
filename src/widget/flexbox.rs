@@ -76,13 +76,12 @@ impl Flexbox {
 		for (i, s) in self.sizes.iter().enumerate() {
 			if let Size::Auto = s {
 				let hint_length = match direction {
-					Direction::Vertical => self.widgets[i]
-						.get_width_hint()
-						as u16,
-					Direction::Horizontal => {
-						self.widgets[i]
-							.get_height_hint() as u16
+					Direction::Vertical => {
+						self.widgets[i].get_width_hint()
 					}
+					Direction::Horizontal => self.widgets
+						[i]
+						.get_height_hint(),
 				};
 
 				cut!(i, hint_length);
@@ -96,11 +95,11 @@ impl Flexbox {
 }
 
 impl Widget for Flexbox {
-	fn get_width_hint(&self) -> usize {
+	fn get_width_hint(&self) -> u16 {
 		self.widgets.iter().map(|w| w.get_width_hint()).sum()
 	}
 
-	fn get_height_hint(&self) -> usize {
+	fn get_height_hint(&self) -> u16 {
 		self.widgets.iter().map(|w| w.get_height_hint()).sum()
 	}
 

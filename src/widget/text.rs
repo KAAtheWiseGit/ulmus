@@ -34,18 +34,18 @@ impl Text {
 }
 
 impl Widget for Text {
-	fn get_width_hint(&self) -> usize {
+	fn get_width_hint(&self) -> u16 {
 		self.content
 			.lines()
 			// TODO: handle width
 			.map(|s| s.chars().count())
 			.max()
 			// If there are no lines, the width is 0
-			.unwrap_or(0)
+			.unwrap_or(0) as u16
 	}
 
-	fn get_height_hint(&self) -> usize {
-		self.content.lines().count()
+	fn get_height_hint(&self) -> u16 {
+		self.content.lines().count() as u16
 	}
 
 	#[allow(unused_must_use)]
