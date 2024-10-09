@@ -1,6 +1,6 @@
 pub use crossterm::event::MouseEvent;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Area {
 	pub x: u16,
 	pub y: u16,
@@ -22,7 +22,7 @@ impl Area {
 		let (x, y) = (event.column, event.row);
 
 		self.x <= x
-			&& x <= self.x + self.width
-			&& self.y <= y && y <= self.y + self.height
+			&& x < self.x + self.width
+			&& self.y <= y && y < self.y + self.height
 	}
 }
