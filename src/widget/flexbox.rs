@@ -2,8 +2,8 @@ use super::Widget;
 use crate::{Area, Command, Message, Reactive, View};
 
 pub enum Direction {
-	Row,
-	Column,
+	Vertical,
+	Horizontal,
 }
 
 pub enum Size {
@@ -13,26 +13,39 @@ pub enum Size {
 }
 
 pub struct Flexbox {
+	direction: Direction,
 	widgets: Vec<Box<dyn Widget>>,
 	sizes: Vec<Size>,
-
-	direction: Direction,
 }
 
 impl Flexbox {
-	pub fn from(
+	pub fn new(
+		direction: Direction,
 		widgets: Vec<Box<dyn Widget>>,
 		sizes: Vec<Size>,
-		direction: Direction,
-	) -> Self {
+	) -> Box<Flexbox> {
 		// TODO automatically truncate/extend `sizes`
 		assert_eq!(widgets.len(), sizes.len());
 
-		Self {
+		Box::new(Flexbox {
 			widgets,
 			sizes,
 			direction,
-		}
+		})
+	}
+
+	pub fn vertical(
+		widgets: Vec<Box<dyn Widget>>,
+		sizes: Vec<Size>,
+	) -> Box<Flexbox> {
+		Flexbox::new(Direction::Vertical, widgets, sizes)
+	}
+
+	pub fn horizontal(
+		widgets: Vec<Box<dyn Widget>>,
+		sizes: Vec<Size>,
+	) -> Box<Flexbox> {
+		Flexbox::new(Direction::Horizontal, widgets, sizes)
 	}
 }
 
