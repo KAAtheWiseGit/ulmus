@@ -52,14 +52,12 @@ impl Widget for Text {
 	fn render(&self, area: Area) -> String {
 		let mut out = String::new();
 		// XXX: methods on area
-		cursor::MoveTo(area.x as u16, area.y as u16)
-			.write_ansi(&mut out);
+		cursor::MoveTo(area.x, area.y).write_ansi(&mut out);
 
-		for line in self.content.lines().take(area.height) {
+		for line in self.content.lines().take(area.height as usize) {
 			fit_write_str(line, area.width, &mut out);
 
-			cursor::MoveToColumn(area.x as u16)
-				.write_ansi(&mut out);
+			cursor::MoveToColumn(area.x).write_ansi(&mut out);
 			cursor::MoveDown(1).write_ansi(&mut out);
 		}
 
@@ -76,7 +74,8 @@ impl Widget for Text {
 	}
 }
 
-fn fit_write_str(s: &str, len: usize, f: &mut impl Write) -> Result {
+fn fit_write_str(s: &str, len: u16, f: &mut impl Write) -> Result {
+	let len = len as usize;
 	let s_len = s.chars().count();
 
 	match s_len.cmp(&len) {

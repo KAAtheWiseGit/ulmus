@@ -2,14 +2,14 @@ pub use crossterm::event::MouseEvent;
 
 #[derive(Copy, Clone)]
 pub struct Area {
-	pub x: usize,
-	pub y: usize,
-	pub width: usize,
-	pub height: usize,
+	pub x: u16,
+	pub y: u16,
+	pub width: u16,
+	pub height: u16,
 }
 
 impl Area {
-	pub fn new(x: usize, y: usize, width: usize, height: usize) -> Area {
+	pub fn new(x: u16, y: u16, width: u16, height: u16) -> Area {
 		Area {
 			x,
 			y,
@@ -19,11 +19,10 @@ impl Area {
 	}
 
 	pub fn contains(&self, event: MouseEvent) -> bool {
-		let ex: usize = event.column.into();
-		let ey: usize = event.row.into();
+		let (x, y) = (event.column, event.row);
 
-		self.x <= ex
-			&& ex <= self.x + self.width
-			&& self.y <= ey && ey <= self.y + self.height
+		self.x <= x
+			&& x <= self.x + self.width
+			&& self.y <= y && y <= self.y + self.height
 	}
 }

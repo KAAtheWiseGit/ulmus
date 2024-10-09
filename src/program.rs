@@ -189,9 +189,9 @@ fn get_area() -> Result<Area> {
 	let cursor = cursor::position()?;
 
 	Ok(Area {
-		x: cursor.0.into(),
-		y: cursor.1.into(),
-		width: (size.0 - cursor.0).into(),
-		height: (size.1 - cursor.1).into(),
+		x: cursor.0,
+		y: cursor.1,
+		width: size.0 - cursor.0,
+		height: size.1 - cursor.1,
 	})
 }
