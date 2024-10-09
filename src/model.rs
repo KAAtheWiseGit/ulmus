@@ -36,6 +36,7 @@ impl Message {
 /// [`update`][Model#tymethod.update] and can be used to change control the
 /// event loop.
 pub enum Command {
+	SetCursor(u16, u16),
 	/// Immediately shuts down the program.
 	Quit,
 	/// Launches a subroutine.  Note that this command can be sent at any

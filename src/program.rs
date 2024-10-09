@@ -90,6 +90,11 @@ impl Program {
 			let iter = commands;
 			for command in iter {
 				match command {
+					Command::SetCursor(x, y) => {
+						stdout.execute(
+							cursor::MoveTo(x, y),
+						)?;
+					}
 					Command::Quit => break 'event,
 					Command::Subroutine(subroutine) => {
 						run_subroutine(
