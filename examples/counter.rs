@@ -53,6 +53,16 @@ impl Model for Counter {
 				_ => {}
 			}
 		}
+		if let Some(action) = message.as_ref::<Action>() {
+			match action {
+				Action::Increment => {
+					self.count += 1;
+				}
+				Action::Decrement => {
+					self.count -= 1;
+				}
+			}
+		}
 
 		vec![]
 	}
@@ -64,18 +74,21 @@ impl Model for Counter {
 				Flexbox::horizontal(
 					vec![
 						button(
-							"Increment",
-							Action::Increment,
-						),
-						button(
 							"Decrement",
 							Action::Decrement,
 						),
+						button(
+							"Increment",
+							Action::Increment,
+						),
 					],
-					vec![Size::Auto, Size::Auto],
+					vec![
+						Size::Length(20),
+						Size::Length(20),
+					],
 				),
 			],
-			vec![Size::Auto, Size::Auto],
+			vec![Size::Length(1), Size::Length(1)],
 		)
 	}
 }
