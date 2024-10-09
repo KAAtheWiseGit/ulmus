@@ -1,3 +1,5 @@
+use crossterm::event::MouseEvent;
+
 use super::Widget;
 use crate::{Area, Message};
 
@@ -62,7 +64,7 @@ impl Widget for Flexbox {
 		todo!()
 	}
 
-	fn on_click(&self, event: crossterm::event::MouseEvent) -> Message {
+	fn on_click(&self, area: Area, event: MouseEvent) -> Message {
 		todo!()
 	}
 }
