@@ -3,7 +3,7 @@ use crossterm::event::MouseEvent;
 mod flexbox;
 mod text;
 
-pub use flexbox::Flexbox;
+pub use flexbox::{Flexbox, Size};
 pub use text::Text;
 
 use crate::{Area, Message};
