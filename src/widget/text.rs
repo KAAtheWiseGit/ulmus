@@ -44,14 +44,13 @@ impl View for Text {
 	#[allow(unused_must_use)]
 	fn view(&self, area: Area) -> String {
 		let mut out = String::new();
-		for (i, line) in self.content.lines().enumerate() {
-			cursor::SavePosition.write_ansi(&mut out);
-			if i > 0 {
-				cursor::MoveDown(i as u16).write_ansi(&mut out);
-			}
+		// XXX: methods on area
+		cursor::MoveTo(area.x as u16, area.y as u16)
+			.write_ansi(&mut out);
 
-			fit_write_str(line, self.get_width_hint(), &mut out);
-			cursor::RestorePosition.write_ansi(&mut out);
+		for line in self.content.lines().take(area.height) {
+			fit_write_str(line, area.width, &mut out);
+			cursor::MoveDown(1).write_ansi(&mut out);
 		}
 
 		out
