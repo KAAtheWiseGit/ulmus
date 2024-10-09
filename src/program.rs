@@ -81,7 +81,6 @@ impl Program {
 		run_subroutine(crossterm_subroutine(), sender.clone());
 
 		let mut commands = model.init();
-
 		'event: loop {
 			// A hack to move commands into the loop
 			let iter = commands;
@@ -97,7 +96,9 @@ impl Program {
 				}
 			}
 
-			stdout.queue(Print(model.view(area)))?;
+			let widget = model.view();
+			let cmd = widget.render(area);
+			stdout.queue(Print(cmd))?;
 			stdout.flush()?;
 
 			let Ok(message) = reciever.recv() else {
