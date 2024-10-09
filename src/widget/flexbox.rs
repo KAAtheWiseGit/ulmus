@@ -1,5 +1,3 @@
-#![allow(unused)]
-
 use super::Widget;
 use crate::{Command, Message, Reactive, View};
 
@@ -19,9 +17,6 @@ pub struct Flexbox {
 	sizes: Vec<Size>,
 
 	direction: Direction,
-
-	width: Option<usize>,
-	height: Option<usize>,
 }
 
 impl Flexbox {
@@ -37,8 +32,6 @@ impl Flexbox {
 			widgets,
 			sizes,
 			direction,
-			width: None,
-			height: None,
 		}
 	}
 }
@@ -56,23 +49,11 @@ impl View for Flexbox {
 }
 
 impl Widget for Flexbox {
-	fn set_width(&mut self, width: Option<usize>) {
-		self.width = width;
+	fn get_width_hint(&self) -> usize {
+		self.widgets.iter().map(|w| w.get_width_hint()).sum()
 	}
 
-	fn set_height(&mut self, height: Option<usize>) {
-		self.height = height;
-	}
-
-	fn get_width(&self) -> usize {
-		self.width.unwrap_or_else(|| {
-			self.widgets.iter().map(|w| w.get_width()).sum()
-		})
-	}
-
-	fn get_height(&self) -> usize {
-		self.height.unwrap_or_else(|| {
-			self.widgets.iter().map(|w| w.get_height()).sum()
-		})
+	fn get_height_hint(&self) -> usize {
+		self.widgets.iter().map(|w| w.get_height_hint()).sum()
 	}
 }

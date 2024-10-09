@@ -10,18 +10,11 @@ use crate::{Command, Message, Reactive, View};
 
 pub struct Text {
 	content: String,
-
-	width: Option<usize>,
-	height: Option<usize>,
 }
 
 impl Text {
 	pub fn from(content: String) -> Self {
-		Self {
-			content,
-			width: None,
-			height: None,
-		}
+		Self { content }
 	}
 }
 
@@ -32,31 +25,17 @@ impl Reactive for Text {
 }
 
 impl Widget for Text {
-	fn set_width(&mut self, width: Option<usize>) {
-		self.width = width;
+	fn get_width_hint(&self) -> usize {
+		self.content
+			.lines()
+			// TODO: handle width
+			.map(|s| s.chars().count())
+			.max()
+			// If there are no lines, the width is 0
+			.unwrap_or(0)
 	}
 
-	fn set_height(&mut self, height: Option<usize>) {
-		self.height = height;
-	}
-
-	fn get_width(&self) -> usize {
-		self.width.unwrap_or(
-			self.content
-				.lines()
-				// TODO: handle width
-				.map(|s| s.chars().count())
-				.max()
-				// If there are no lines, the width is 0
-				.unwrap_or(0),
-		)
-	}
-
-	fn get_height(&self) -> usize {
-		if let Some(height) = self.height {
-			return height;
-		}
-
+	fn get_height_hint(&self) -> usize {
 		self.content.lines().count()
 	}
 }
@@ -66,16 +45,12 @@ impl View for Text {
 	fn view(&self) -> String {
 		let mut out = String::new();
 		for (i, line) in self.content.lines().enumerate() {
-			if self.height.is_some_and(|height| height == i) {
-				break;
-			}
-
 			cursor::SavePosition.write_ansi(&mut out);
 			if i > 0 {
 				cursor::MoveDown(i as u16).write_ansi(&mut out);
 			}
 
-			fit_write_str(line, self.get_width(), &mut out);
+			fit_write_str(line, self.get_width_hint(), &mut out);
 			cursor::RestorePosition.write_ansi(&mut out);
 		}
 
