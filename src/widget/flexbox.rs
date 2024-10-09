@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use super::Widget;
 use crate::{Command, Message, Reactive, View};
 
@@ -55,7 +57,7 @@ impl Reactive for Flexbox {
 }
 
 impl View for Flexbox {
-	fn view(&self) -> crossterm::style::Print<String> {
+	fn view(&self) -> String {
 		todo!()
 	}
 }

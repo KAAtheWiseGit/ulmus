@@ -1,4 +1,4 @@
-use crossterm::{cursor, style::Print, Command as _};
+use crossterm::{cursor, Command as _};
 
 use std::{
 	cmp::Ordering,
@@ -63,7 +63,7 @@ impl Widget for Text {
 
 impl View for Text {
 	#[allow(unused_must_use)]
-	fn view(&self) -> Print<String> {
+	fn view(&self) -> String {
 		let mut out = String::new();
 		for (i, line) in self.content.lines().enumerate() {
 			if self.height.is_some_and(|height| height == i) {
@@ -79,7 +79,7 @@ impl View for Text {
 			cursor::RestorePosition.write_ansi(&mut out);
 		}
 
-		Print(out)
+		out
 	}
 }
 

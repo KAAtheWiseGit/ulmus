@@ -1,4 +1,7 @@
-use crossterm::{cursor, event, terminal, ExecutableCommand, QueueableCommand};
+use crossterm::{
+	cursor, event, style::Print, terminal, ExecutableCommand,
+	QueueableCommand,
+};
 
 use std::{
 	io::{stdout, Result, Write},
@@ -92,7 +95,7 @@ impl Program {
 				}
 			}
 
-			stdout.queue(model.view())?;
+			stdout.queue(Print(model.view()))?;
 			stdout.flush()?;
 
 			let Ok(message) = reciever.recv() else {
