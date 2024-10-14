@@ -1,6 +1,6 @@
 use crossterm::{
 	cursor,
-	event::{self, Event},
+	event::{self, Event, MouseEventKind},
 	queue,
 	style::Print,
 	terminal::{self, ClearType},
@@ -115,6 +115,18 @@ impl Program {
 			if let Some(Event::Mouse(event)) =
 				message.as_ref::<Event>()
 			{
+				// If the event is a click outside of the TUI
+				// area, ignore it.
+				//
+				// XXX: should mouse up and drag events be
+				// ignored too?
+				if matches!(event.kind, MouseEventKind::Down(_))
+					&& !area.contains(*event)
+				{
+					commands = vec![];
+					continue;
+				}
+
 				let msg = widget.process_mouse(*event, area);
 				commands = model.update(msg);
 				continue;
