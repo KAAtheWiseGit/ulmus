@@ -7,7 +7,7 @@ authors = ["Andrej Kolčin <self@kaathewise.net>"]
 description = "An Elm architecture TUI framework"
 keywords = ["tui", "terminal", "elm", "widgets"]
 categories = ["command-line-interface"]
-repository = "https://codeberg.org/kaathewise/ulmus"
+repository = "https://github.com/KAAtheWiseGit/ulmus"
 
 [dependencies]
 crossterm = "0.28.1"
