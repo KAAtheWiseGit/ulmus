@@ -86,7 +86,32 @@ impl Flexbox {
 			}
 		}
 
-		// TODO: fractions
+		let fractions: Vec<(usize, u16)> = self
+			.sizes
+			.iter()
+			.enumerate()
+			.filter_map(|(i, s)| {
+				if let Size::Fraction(fraction) = s {
+					Some((i, *fraction))
+				} else {
+					None
+				}
+			})
+			.collect();
+		let sum: u16 = fractions.iter().map(|(_, size)| size).sum();
+		for (i, fraction) in fractions {
+			// TODO: this is not correct, as divisoun rounds towards
+			// zero.  It'll lose a few rows/columns, making the
+			// flexbox smaller than it should be.
+			//
+			// I don't want to bring a whole solver to fix this
+			// issue.  Will have to find a simple remainder
+			// allocation or another division algorithm.
+			//
+			// https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html#arithmetic-and-logical-binary-operators
+			let fraction_length = total_length * fraction / sum;
+			cut!(i, fraction_length);
+		}
 
 		out
 	}
