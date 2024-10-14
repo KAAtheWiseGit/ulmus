@@ -70,10 +70,6 @@ impl Widget for Border {
 	}
 
 	fn process_mouse(&self, event: MouseEvent, area: Area) -> Message {
-		if !area.contains(event) {
-			return Message::empty();
-		}
-
 		// TODO: true length
 		// TODO: area methods
 		// XXX: overall, that's some ugly, ugly code.  Terminal length
