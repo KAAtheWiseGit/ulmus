@@ -1,10 +1,12 @@
 use crossterm::event::MouseEvent;
 
+mod border;
 mod flexbox;
 mod text;
 
 pub use flexbox::{Flexbox, Size};
 pub use text::Text;
+pub use border::Border;
 
 use crate::{Area, Message};
 
