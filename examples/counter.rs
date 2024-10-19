@@ -1,6 +1,6 @@
 use crossterm::event::{Event, KeyCode, MouseEventKind};
 use ulmus::{
-	widget::{Flexbox, Size, Text, Widget},
+	widget::{Border, Flexbox, Size, Text, Widget},
 	Command, Message, Model, Program,
 };
 
@@ -20,14 +20,25 @@ enum Action {
 	Decrement,
 }
 
-fn button(title: &str, action: Action) -> Box<Text> {
-	Text::new(title).on_mouse(move |message| {
-		if matches!(message.kind, MouseEventKind::Down(_)) {
-			Message::new(action)
-		} else {
-			Message::empty()
-		}
-	})
+fn button(title: &str, action: Action) -> Box<dyn Widget> {
+	Border::new(
+		Text::new(title).on_mouse(move |message| {
+			if matches!(message.kind, MouseEventKind::Down(_)) {
+				Message::new(action)
+			} else {
+				Message::empty()
+			}
+		}),
+		"-".to_owned(),
+		"-".to_owned(),
+		"|".to_owned(),
+		"|".to_owned(),
+		"+".to_owned(),
+		"+".to_owned(),
+		"+".to_owned(),
+		"+".to_owned(),
+	)
+	.forward(true)
 }
 
 impl Model for Counter {
@@ -88,7 +99,7 @@ impl Model for Counter {
 					],
 				),
 			],
-			vec![Size::Length(1), Size::Length(1)],
+			vec![Size::Length(2), Size::Length(3)],
 		)
 	}
 }
