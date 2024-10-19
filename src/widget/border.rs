@@ -65,8 +65,39 @@ impl Widget for Border {
 			+ self.bottom.len() as u16
 	}
 
+	#[allow(unused_must_use)]
 	fn render(&self, area: Area) -> String {
-		todo!();
+		let mut out = String::new();
+
+		cursor::MoveTo(area.x, area.y).write_ansi(&mut out);
+		out += &self.top_left;
+		out += &self.top.repeat((area.width - 2).into());
+		out += &self.top_right;
+
+		for i in 1..area.height {
+			cursor::MoveTo(area.x, area.y + i).write_ansi(&mut out);
+			out += &self.left;
+		}
+		for i in 1..area.height {
+			cursor::MoveTo(area.x + area.width - 1, area.y + i)
+				.write_ansi(&mut out);
+			out += &self.right;
+		}
+
+		cursor::MoveTo(area.x, area.y + area.height)
+			.write_ansi(&mut out);
+		out += &self.bottom_left;
+		out += &self.bottom.repeat((area.width - 2).into());
+		out += &self.bottom_right;
+
+		out += &self.inner.render(Area {
+			x: area.x + 1,
+			y: area.y + 1,
+			width: area.width - 2,
+			height: area.height - 2,
+		});
+
+		out
 	}
 
 	fn process_mouse(&self, event: MouseEvent, area: Area) -> Message {
